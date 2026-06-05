@@ -35,7 +35,7 @@ export function TopNavBar({
             />
           </div>
           <span className="hidden font-[family-name:var(--font-heading)] text-[15px] font-semibold tracking-tight text-[var(--text-primary)] sm:inline">
-            Bloom
+            BloomCode
           </span>
         </div>
 

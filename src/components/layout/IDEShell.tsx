@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useState } from 'react'
-import { mockFileContents } from '../../data/mockFileTree'
+import type { LandingActionId } from '../landing/landingActions'
+import { mockFileContents, mockFileTree } from '../../data/mockFileTree'
 import type { ActivityView, FileNode, OpenTab } from '../../types/ide'
+import { findFileById } from '../../utils/findFileById'
 import { AIAssistantPanel } from '../ai/AIAssistantPanel'
 import { ActivityBar } from './ActivityBar'
 import { EditorArea } from './EditorArea'
@@ -18,32 +20,11 @@ function fileToTab(node: FileNode): OpenTab {
   }
 }
 
-const DEMO_TABS: OpenTab[] = [
-  {
-    id: 'index-tsx',
-    name: 'index.tsx',
-    language: 'typescript',
-    content: mockFileContents['index-tsx'],
-  },
-  {
-    id: 'app-tsx',
-    name: 'app.tsx',
-    language: 'typescript',
-    content: mockFileContents['app-tsx'],
-  },
-  {
-    id: 'tailwind-config',
-    name: 'tailwind.config.ts',
-    language: 'typescript',
-    content: mockFileContents['tailwind-config'],
-  },
-]
-
 export function IDEShell() {
   const [activeView, setActiveView] = useState<ActivityView>('explorer')
-  const [aiPanelOpen, setAiPanelOpen] = useState(true)
-  const [openTabs, setOpenTabs] = useState<OpenTab[]>(DEMO_TABS)
-  const [activeTabId, setActiveTabId] = useState<string | null>('app-tsx')
+  const [aiPanelOpen, setAiPanelOpen] = useState(false)
+  const [openTabs, setOpenTabs] = useState<OpenTab[]>([])
+  const [activeTabId, setActiveTabId] = useState<string | null>(null)
   const [cursor, setCursor] = useState({ line: 1, column: 1 })
 
   const activeTab = useMemo(
@@ -51,15 +32,7 @@ export function IDEShell() {
     [openTabs, activeTabId],
   )
 
-  const handleActivityChange = useCallback((view: ActivityView) => {
-    if (view === 'ai') {
-      setAiPanelOpen((open) => !open)
-      return
-    }
-    setActiveView(view)
-  }, [])
-
-  const handleSelectFile = useCallback((node: FileNode) => {
+  const openFileNode = useCallback((node: FileNode) => {
     if (node.type !== 'file') return
 
     const tab = fileToTab(node)
@@ -69,6 +42,19 @@ export function IDEShell() {
     })
     setActiveTabId(tab.id)
   }, [])
+
+  const handleActivityChange = useCallback((view: ActivityView) => {
+    if (view === 'ai') {
+      setAiPanelOpen((open) => !open)
+      return
+    }
+    setActiveView(view)
+  }, [])
+
+  const handleSelectFile = useCallback(
+    (node: FileNode) => openFileNode(node),
+    [openFileNode],
+  )
 
   const handleCloseTab = useCallback(
     (id: string) => {
@@ -93,6 +79,30 @@ export function IDEShell() {
       )
     },
     [activeTabId],
+  )
+
+  const handleLandingAction = useCallback(
+    (action: LandingActionId) => {
+      switch (action) {
+        case 'new-project': {
+          const file = findFileById(mockFileTree, 'app-tsx')
+          if (file) openFileNode(file)
+          break
+        }
+        case 'open-folder':
+          setActiveView('explorer')
+          break
+        case 'clone': {
+          const file = findFileById(mockFileTree, 'readme')
+          if (file) openFileNode(file)
+          break
+        }
+        case 'continue-ai':
+          setAiPanelOpen(true)
+          break
+      }
+    },
+    [openFileNode],
   )
 
   return (
@@ -125,6 +135,7 @@ export function IDEShell() {
             content={activeTab?.content ?? ''}
             onChange={handleContentChange}
             onCursorChange={(line, column) => setCursor({ line, column })}
+            onLandingAction={handleLandingAction}
           />
           <StatusBar
             language={activeTab?.language}
