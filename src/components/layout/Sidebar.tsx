@@ -1,4 +1,4 @@
-import { GitBranch, Puzzle, Settings, Sparkles } from 'lucide-react'
+import { GitBranch, Puzzle, Settings } from 'lucide-react'
 import type { ActivityView, FileNode } from '../../types/ide'
 import { FileExplorer } from '../explorer/FileExplorer'
 import { PlaceholderPanel } from '../panels/PlaceholderPanel'
@@ -29,13 +29,6 @@ export function Sidebar({ activeView, selectedFileId, onSelectFile }: SidebarPro
           title="Extensions"
           description="Discover plugins to personalize your Bloom workspace."
           icon={Puzzle}
-        />
-      )}
-      {activeView === 'ai' && (
-        <PlaceholderPanel
-          title="AI Assistant"
-          description="Your coding companion — ask questions, refactor, and learn."
-          icon={Sparkles}
         />
       )}
       {activeView === 'settings' && (

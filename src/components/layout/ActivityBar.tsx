@@ -29,11 +29,12 @@ const ACTIVITY_ITEMS: ActivityItem[] = [
 
 type ActivityBarProps = {
   active: ActivityView
+  aiActive?: boolean
   onChange: (view: ActivityView) => void
   scmBadge?: number
 }
 
-export function ActivityBar({ active, onChange, scmBadge = 3 }: ActivityBarProps) {
+export function ActivityBar({ active, aiActive = false, onChange, scmBadge = 3 }: ActivityBarProps) {
   const topItems = ACTIVITY_ITEMS.filter((item) => !item.bottom)
   const bottomItems = ACTIVITY_ITEMS.filter((item) => item.bottom)
 
@@ -48,7 +49,7 @@ export function ActivityBar({ active, onChange, scmBadge = 3 }: ActivityBarProps
             <IconButton
               icon={item.icon}
               label={item.label}
-              active={active === item.id}
+              active={item.id === 'ai' ? aiActive : active === item.id}
               accent={item.accent}
               onClick={() => onChange(item.id)}
             />

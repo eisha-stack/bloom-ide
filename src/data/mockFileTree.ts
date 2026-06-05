@@ -52,8 +52,14 @@ export const mockFileTree: FileNode[] = [
         ],
       },
       {
+        id: 'index-tsx',
+        name: 'index.tsx',
+        type: 'file',
+        language: 'typescript',
+      },
+      {
         id: 'app-tsx',
-        name: 'App.tsx',
+        name: 'app.tsx',
         type: 'file',
         language: 'typescript',
       },
@@ -84,6 +90,12 @@ export const mockFileTree: FileNode[] = [
     language: 'markdown',
   },
   {
+    id: 'tailwind-config',
+    name: 'tailwind.config.ts',
+    type: 'file',
+    language: 'typescript',
+  },
+  {
     id: 'vite-config',
     name: 'vite.config.ts',
     type: 'file',
@@ -92,13 +104,39 @@ export const mockFileTree: FileNode[] = [
 ]
 
 export const mockFileContents: Record<string, string> = {
+  'index-tsx': `import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './app.tsx'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
+`,
   'app-tsx': `import { IDEShell } from './components/layout/IDEShell'
 
-function App() {
+export default function App() {
   return <IDEShell />
 }
+`,
+  'tailwind-config': `import type { Config } from 'tailwindcss'
 
-export default App
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        bloom: {
+          pink: '#FFB6C1',
+          lavender: '#CDB4DB',
+          purple: '#B8A2E3',
+        },
+      },
+    },
+  },
+} satisfies Config
 `,
   'main-tsx': `import React from 'react'
 import ReactDOM from 'react-dom/client'
