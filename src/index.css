@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --color-bloom-pink: #ffb6c1;
+  --color-bloom-blush: #ffc8dd;
+  --color-bloom-lavender: #cdb4db;
+  --color-bloom-purple: #b8a2e3;
+  --color-bloom-lilac: #e5d9f2;
+  --color-bloom-main: #15131d;
+  --color-bloom-sidebar: #1b1826;
+  --color-bloom-editor: #211d2e;
+  --color-bloom-card: #2a2438;
+  --color-bloom-pink-glow: #ff69b4;
+  --color-bloom-purple-glow: #a855f7;
+  --color-bloom-success: #86efac;
+  --color-bloom-error: #fca5a5;
+  --font-ui: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+:root {
+  --bloom-pink: #ffb6c1;
+  --bloom-blush: #ffc8dd;
+  --bloom-lavender: #cdb4db;
+  --bloom-purple: #b8a2e3;
+  --bloom-lilac: #e5d9f2;
+  --bg-main: #15131d;
+  --bg-sidebar: #1b1826;
+  --bg-editor: #211d2e;
+  --bg-card: #2a2438;
+  --accent-pink-glow: #ff69b4;
+  --accent-purple-glow: #a855f7;
+  --success: #86efac;
+  --error: #fca5a5;
+  --text-primary: #f5f0fa;
+  --text-secondary: #a89bb8;
+  --text-muted: #6b5f7a;
+  --border-subtle: rgba(205, 180, 219, 0.12);
+  --glass-bg: rgba(42, 36, 56, 0.72);
+  --glass-blur: 12px;
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-icon: 12px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--bg-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--accent-purple-glow);
+  outline-offset: 2px;
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
