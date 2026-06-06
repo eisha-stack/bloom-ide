@@ -1,0 +1,93 @@
+import type { ThemeDefinition, ThemeId } from './types'
+
+export const bloomDark: ThemeDefinition = {
+  id: 'bloom-dark',
+  name: 'Bloom Dark',
+  emoji: '🌙',
+  description: 'Deep purple nights with pink glow accents.',
+  mode: 'dark',
+  monacoThemeId: 'bloom-dark',
+  tokens: {
+    bgPrimary: '#15131D',
+    bgSecondary: '#1B1826',
+    sidebar: '#1B1826',
+    bgEditor: '#211D2E',
+    bgCard: '#2A2438',
+    accentPrimary: '#FF69B4',
+    accentSecondary: '#FFC8DD',
+    accentPurple: '#A855F7',
+    textPrimary: '#F5F0FA',
+    textSecondary: '#A89BB8',
+    textMuted: '#6B5F7A',
+    success: '#86EFAC',
+    warning: '#F8C471',
+    error: '#FCA5A5',
+    bloomPink: '#FFB6C1',
+    bloomBlush: '#FFC8DD',
+    bloomLavender: '#CDB4DB',
+    bloomPurple: '#B8A2E3',
+    bloomLilac: '#E5D9F2',
+    borderSubtle: 'rgba(205, 180, 219, 0.12)',
+    glassBg: 'rgba(42, 36, 56, 0.72)',
+    navGlassBg: 'rgba(27, 24, 38, 0.75)',
+    shadowSoft: '0 4px 24px rgba(0, 0, 0, 0.25)',
+    shadowGlow: '0 0 16px rgba(255, 105, 180, 0.25)',
+    gridDot: 'rgba(205, 180, 219, 0.12)',
+    blobPink: 'rgba(255, 105, 180, 0.18)',
+    blobLavender: 'rgba(205, 180, 219, 0.14)',
+    blobPurple: 'rgba(168, 85, 247, 0.12)',
+    blobBlush: 'rgba(255, 200, 221, 0.1)',
+    hoverBg: 'rgba(255, 182, 193, 0.08)',
+    selectionBg: 'rgba(184, 162, 227, 0.12)',
+  },
+}
+
+export const sakuraBlossom: ThemeDefinition = {
+  id: 'sakura-blossom',
+  name: 'Sakura Blossom',
+  emoji: '🌸',
+  description: 'Soft, romantic cherry blossom spring light theme.',
+  mode: 'light',
+  monacoThemeId: 'sakura-blossom',
+  tokens: {
+    bgPrimary: '#FFF7FA',
+    bgSecondary: '#FFE8F0',
+    sidebar: '#FFD6E7',
+    bgEditor: '#FFFBFC',
+    bgCard: '#FFE8F0',
+    accentPrimary: '#FF69B4',
+    accentSecondary: '#FF85C1',
+    accentPurple: '#E879A8',
+    textPrimary: '#4A2B3D',
+    textSecondary: '#7A5465',
+    textMuted: '#A08090',
+    success: '#7DD87D',
+    warning: '#F8C471',
+    error: '#FF8A8A',
+    bloomPink: '#FFB6C1',
+    bloomBlush: '#FFC8DD',
+    bloomLavender: '#E8B4CB',
+    bloomPurple: '#D4789F',
+    bloomLilac: '#F5E0EA',
+    borderSubtle: 'rgba(122, 84, 101, 0.14)',
+    glassBg: 'rgba(255, 255, 255, 0.65)',
+    navGlassBg: 'rgba(255, 247, 250, 0.85)',
+    shadowSoft: '0 4px 24px rgba(74, 43, 61, 0.08)',
+    shadowGlow: '0 0 20px rgba(255, 105, 180, 0.2)',
+    gridDot: 'rgba(255, 105, 180, 0.15)',
+    blobPink: 'rgba(255, 133, 193, 0.25)',
+    blobLavender: 'rgba(255, 214, 231, 0.5)',
+    blobPurple: 'rgba(232, 121, 168, 0.15)',
+    blobBlush: 'rgba(255, 232, 240, 0.6)',
+    hoverBg: 'rgba(255, 105, 180, 0.08)',
+    selectionBg: 'rgba(255, 133, 193, 0.15)',
+  },
+}
+
+export const THEMES: ThemeDefinition[] = [bloomDark, sakuraBlossom]
+
+export const DEFAULT_THEME_ID: ThemeId = 'bloom-dark'
+
+export function getThemeById(id: ThemeId): ThemeDefinition {
+  return THEMES.find((t) => t.id === id) ?? bloomDark
+}

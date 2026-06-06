@@ -45,7 +45,7 @@ export function StatusBar({
           {errors} {errors === 1 ? 'Error' : 'Errors'}
         </span>
 
-        <span className="flex items-center gap-1 text-[var(--bloom-blush)]">
+        <span className="flex items-center gap-1 text-[var(--warning)]">
           <AlertTriangle size={11} />
           {warnings} {warnings === 1 ? 'Warning' : 'Warnings'}
         </span>

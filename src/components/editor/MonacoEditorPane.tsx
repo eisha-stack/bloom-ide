@@ -1,7 +1,8 @@
 import Editor, { type OnMount } from '@monaco-editor/react'
 import type { editor } from 'monaco-editor'
-import { useCallback, useRef } from 'react'
-import { BLOOM_MONACO_THEME, bloomMonacoTheme } from '../../theme/monacoTheme'
+import { useCallback, useEffect, useRef } from 'react'
+import { useTheme } from '../../theme/ThemeProvider'
+import { registerMonacoThemes } from '../../theme/monacoThemes'
 
 type MonacoEditorPaneProps = {
   value: string
@@ -16,23 +17,33 @@ export function MonacoEditorPane({
   onChange,
   onCursorChange,
 }: MonacoEditorPaneProps) {
+  const { monacoThemeId } = useTheme()
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
+  const monacoRef = useRef<typeof import('monaco-editor') | null>(null)
 
   const handleBeforeMount = useCallback((monaco: typeof import('monaco-editor')) => {
-    monaco.editor.defineTheme(BLOOM_MONACO_THEME, bloomMonacoTheme)
+    monacoRef.current = monaco
+    registerMonacoThemes(monaco)
   }, [])
 
   const handleMount: OnMount = useCallback(
     (editorInstance, monaco) => {
       editorRef.current = editorInstance
-      monaco.editor.setTheme(BLOOM_MONACO_THEME)
+      monacoRef.current = monaco
+      monaco.editor.setTheme(monacoThemeId)
 
       editorInstance.onDidChangeCursorPosition((e) => {
         onCursorChange?.(e.position.lineNumber, e.position.column)
       })
     },
-    [onCursorChange],
+    [monacoThemeId, onCursorChange],
   )
+
+  useEffect(() => {
+    if (monacoRef.current) {
+      monacoRef.current.editor.setTheme(monacoThemeId)
+    }
+  }, [monacoThemeId])
 
   return (
     <div className="min-h-0 flex-1 overflow-hidden">
@@ -40,7 +51,7 @@ export function MonacoEditorPane({
         height="100%"
         language={language}
         value={value}
-        theme={BLOOM_MONACO_THEME}
+        theme={monacoThemeId}
         beforeMount={handleBeforeMount}
         onMount={handleMount}
         onChange={(v) => onChange(v ?? '')}

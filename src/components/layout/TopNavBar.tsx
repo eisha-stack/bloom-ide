@@ -18,9 +18,9 @@ export function TopNavBar({
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className="gradient-border-bottom relative z-10 shrink-0 px-4 py-2.5 shadow-[0_4px_24px_rgba(0,0,0,0.25)]"
+      className="gradient-border-bottom relative z-10 shrink-0 px-4 py-2.5 shadow-[var(--shadow-soft)]"
       style={{
-        background: 'rgba(27, 24, 38, 0.75)',
+        background: 'var(--nav-glass-bg)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
       }}

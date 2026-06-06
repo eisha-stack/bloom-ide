@@ -2,43 +2,60 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-bloom-pink: #ffb6c1;
-  --color-bloom-blush: #ffc8dd;
-  --color-bloom-lavender: #cdb4db;
-  --color-bloom-purple: #b8a2e3;
-  --color-bloom-lilac: #e5d9f2;
-  --color-bloom-main: #15131d;
-  --color-bloom-sidebar: #1b1826;
-  --color-bloom-editor: #211d2e;
-  --color-bloom-card: #2a2438;
-  --color-bloom-pink-glow: #ff69b4;
-  --color-bloom-purple-glow: #a855f7;
-  --color-bloom-success: #86efac;
-  --color-bloom-error: #fca5a5;
+  --color-bloom-pink: var(--bloom-pink);
+  --color-bloom-blush: var(--bloom-blush);
+  --color-bloom-lavender: var(--bloom-lavender);
+  --color-bloom-purple: var(--bloom-purple);
+  --color-bloom-lilac: var(--bloom-lilac);
+  --color-bloom-main: var(--bg-primary);
+  --color-bloom-sidebar: var(--sidebar);
+  --color-bloom-editor: var(--bg-editor);
+  --color-bloom-card: var(--bg-card);
+  --color-bloom-pink-glow: var(--accent-primary);
+  --color-bloom-purple-glow: var(--accent-purple-glow);
+  --color-bloom-success: var(--success);
+  --color-bloom-error: var(--error);
   --font-ui: 'Inter', system-ui, sans-serif;
   --font-heading: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
+/* Fallback before JS — bloom-dark */
 :root {
+  --bg-primary: #15131d;
+  --bg-secondary: #1b1826;
+  --sidebar: #1b1826;
+  --bg-main: #15131d;
+  --bg-sidebar: #1b1826;
+  --bg-editor: #211d2e;
+  --bg-card: #2a2438;
+  --accent-primary: #ff69b4;
+  --accent-secondary: #ffc8dd;
+  --accent-pink-glow: #ff69b4;
+  --accent-purple-glow: #a855f7;
+  --text-primary: #f5f0fa;
+  --text-secondary: #a89bb8;
+  --text-muted: #6b5f7a;
+  --success: #86efac;
+  --warning: #f8c471;
+  --error: #fca5a5;
   --bloom-pink: #ffb6c1;
   --bloom-blush: #ffc8dd;
   --bloom-lavender: #cdb4db;
   --bloom-purple: #b8a2e3;
   --bloom-lilac: #e5d9f2;
-  --bg-main: #15131d;
-  --bg-sidebar: #1b1826;
-  --bg-editor: #211d2e;
-  --bg-card: #2a2438;
-  --accent-pink-glow: #ff69b4;
-  --accent-purple-glow: #a855f7;
-  --success: #86efac;
-  --error: #fca5a5;
-  --text-primary: #f5f0fa;
-  --text-secondary: #a89bb8;
-  --text-muted: #6b5f7a;
   --border-subtle: rgba(205, 180, 219, 0.12);
   --glass-bg: rgba(42, 36, 56, 0.72);
+  --nav-glass-bg: rgba(27, 24, 38, 0.75);
+  --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.25);
+  --shadow-glow: 0 0 16px rgba(255, 105, 180, 0.25);
+  --grid-dot: rgba(205, 180, 219, 0.12);
+  --blob-pink: rgba(255, 105, 180, 0.18);
+  --blob-lavender: rgba(205, 180, 219, 0.14);
+  --blob-purple: rgba(168, 85, 247, 0.12);
+  --blob-blush: rgba(255, 200, 221, 0.1);
+  --hover-bg: rgba(255, 182, 193, 0.08);
+  --selection-bg: rgba(184, 162, 227, 0.12);
   --glass-blur: 12px;
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-smooth: 250ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -61,15 +78,20 @@ body,
   margin: 0;
 }
 
+html {
+  transition: background-color 0.35s ease, color 0.25s ease;
+}
+
 body {
   font-family: var(--font-ui);
   font-size: 13px;
   line-height: 1.5;
   color: var(--text-primary);
-  background: var(--bg-main);
+  background: var(--bg-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
+  transition: background-color 0.35s ease, color 0.25s ease;
 }
 
 button {
@@ -92,12 +114,13 @@ button:focus-visible {
   -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
+  transition: background-color 0.35s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .gradient-border-bottom {
   border-bottom: 1px solid transparent;
   background-clip: padding-box;
-  box-shadow: inset 0 -1px 0 0 rgba(205, 180, 219, 0.12);
+  box-shadow: inset 0 -1px 0 0 var(--border-subtle);
 }
 
 .gradient-border-bottom::after {
@@ -108,7 +131,7 @@ button:focus-visible {
   background: linear-gradient(
     90deg,
     transparent,
-    var(--accent-pink-glow),
+    var(--accent-primary),
     var(--accent-purple-glow),
     transparent
   );
@@ -129,7 +152,7 @@ button:focus-visible {
 }
 
 .landing-grid {
-  background-image: radial-gradient(rgba(205, 180, 219, 0.12) 1px, transparent 1px);
+  background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
   background-size: 28px 28px;
   mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, black 20%, transparent 75%);
 }

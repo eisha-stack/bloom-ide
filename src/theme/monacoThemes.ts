@@ -1,0 +1,93 @@
+import type { editor } from 'monaco-editor'
+
+export const MONACO_THEME_IDS = {
+  BLOOM_DARK: 'bloom-dark',
+  SAKURA_BLOSSOM: 'sakura-blossom',
+} as const
+
+export const monacoThemes: Record<string, editor.IStandaloneThemeData> = {
+  [MONACO_THEME_IDS.BLOOM_DARK]: {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      { token: 'comment', foreground: '6B5F7A', fontStyle: 'italic' },
+      { token: 'keyword', foreground: 'FF69B4' },
+      { token: 'keyword.control', foreground: 'CDB4DB' },
+      { token: 'string', foreground: '86EFAC' },
+      { token: 'number', foreground: 'FFC8DD' },
+      { token: 'type', foreground: 'B8A2E3' },
+      { token: 'type.identifier', foreground: 'B8A2E3' },
+      { token: 'identifier', foreground: 'E5D9F2' },
+      { token: 'delimiter', foreground: 'A89BB8' },
+      { token: 'operator', foreground: 'FFB6C1' },
+      { token: 'function', foreground: 'A855F7' },
+      { token: 'variable', foreground: 'F5F0FA' },
+      { token: 'tag', foreground: 'FF69B4' },
+      { token: 'attribute.name', foreground: 'CDB4DB' },
+      { token: 'attribute.value', foreground: '86EFAC' },
+    ],
+    colors: {
+      'editor.background': '#211D2E',
+      'editor.foreground': '#F5F0FA',
+      'editor.lineHighlightBackground': '#2A243855',
+      'editor.selectionBackground': '#CDB4DB40',
+      'editor.inactiveSelectionBackground': '#B8A2E325',
+      'editorCursor.foreground': '#FF69B4',
+      'editorLineNumber.foreground': '#6B5F7A',
+      'editorLineNumber.activeForeground': '#A89BB8',
+      'editorIndentGuide.background': '#2A2438',
+      'editorIndentGuide.activeBackground': '#CDB4DB40',
+      'editorGutter.background': '#211D2E',
+      'editorWidget.background': '#2A2438',
+      'editorWidget.border': '#CDB4DB20',
+      'minimap.background': '#1B1826',
+      'scrollbarSlider.background': '#CDB4DB25',
+      'scrollbarSlider.hoverBackground': '#CDB4DB40',
+    },
+  },
+  [MONACO_THEME_IDS.SAKURA_BLOSSOM]: {
+    base: 'vs',
+    inherit: true,
+    rules: [
+      { token: 'comment', foreground: 'A08090', fontStyle: 'italic' },
+      { token: 'keyword', foreground: 'FF69B4' },
+      { token: 'keyword.control', foreground: 'D4789F' },
+      { token: 'string', foreground: '5BAF5B' },
+      { token: 'number', foreground: 'E879A8' },
+      { token: 'type', foreground: 'C06085' },
+      { token: 'type.identifier', foreground: 'C06085' },
+      { token: 'identifier', foreground: '4A2B3D' },
+      { token: 'delimiter', foreground: '7A5465' },
+      { token: 'operator', foreground: 'FF85C1' },
+      { token: 'function', foreground: 'E879A8' },
+      { token: 'variable', foreground: '4A2B3D' },
+      { token: 'tag', foreground: 'FF69B4' },
+      { token: 'attribute.name', foreground: 'D4789F' },
+      { token: 'attribute.value', foreground: '5BAF5B' },
+    ],
+    colors: {
+      'editor.background': '#FFFBFC',
+      'editor.foreground': '#4A2B3D',
+      'editor.lineHighlightBackground': '#FFE8F080',
+      'editor.selectionBackground': '#FF85C140',
+      'editor.inactiveSelectionBackground': '#FFD6E730',
+      'editorCursor.foreground': '#FF69B4',
+      'editorLineNumber.foreground': '#C4A0AD',
+      'editorLineNumber.activeForeground': '#7A5465',
+      'editorIndentGuide.background': '#FFD6E7',
+      'editorIndentGuide.activeBackground': '#FF85C150',
+      'editorGutter.background': '#FFFBFC',
+      'editorWidget.background': '#FFE8F0',
+      'editorWidget.border': '#FF85C130',
+      'minimap.background': '#FFF7FA',
+      'scrollbarSlider.background': '#FF85C125',
+      'scrollbarSlider.hoverBackground': '#FF85C140',
+    },
+  },
+}
+
+export function registerMonacoThemes(monaco: typeof import('monaco-editor')) {
+  for (const [id, theme] of Object.entries(monacoThemes)) {
+    monaco.editor.defineTheme(id, theme)
+  }
+}

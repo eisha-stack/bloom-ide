@@ -30,7 +30,7 @@ export function IconButton({
         'transition-all duration-200',
         active
           ? 'text-[var(--text-primary)]'
-          : 'text-[var(--text-muted)] hover:bg-[rgba(255,182,193,0.08)] hover:text-[var(--bloom-blush)]',
+          : 'text-[var(--text-muted)] hover:bg-[var(--hover-bg)] hover:text-[var(--bloom-blush)]',
       ].join(' ')}
     >
       {active && (

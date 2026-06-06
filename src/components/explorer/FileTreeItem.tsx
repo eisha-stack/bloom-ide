@@ -108,8 +108,8 @@ export function FileTreeItem({
         className={[
           'flex h-7 w-full items-center gap-1.5 rounded-[var(--radius-sm)] pr-2 text-left transition-all duration-200',
           isSelected
-            ? 'border-l-2 border-[var(--bloom-lavender)] bg-[rgba(184,162,227,0.12)] text-[var(--text-primary)]'
-            : 'border-l-2 border-transparent text-[var(--text-secondary)] hover:translate-x-0.5 hover:bg-[rgba(255,200,221,0.06)] hover:text-[var(--text-primary)]',
+            ? 'border-l-2 border-[var(--bloom-lavender)] bg-[var(--selection-bg)] text-[var(--text-primary)]'
+          : 'border-l-2 border-transparent text-[var(--text-secondary)] hover:translate-x-0.5 hover:bg-[var(--hover-bg)] hover:text-[var(--text-primary)]',
         ].join(' ')}
       >
         <FileIcon size={15} className="shrink-0 text-[var(--bloom-purple)]" />

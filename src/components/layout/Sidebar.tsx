@@ -1,8 +1,9 @@
-import { GitBranch, Puzzle, Settings } from 'lucide-react'
+import { GitBranch, Puzzle } from 'lucide-react'
 import type { ActivityView, FileNode } from '../../types/ide'
 import { FileExplorer } from '../explorer/FileExplorer'
 import { PlaceholderPanel } from '../panels/PlaceholderPanel'
 import { SearchPanel } from '../panels/SearchPanel'
+import { SettingsPanel } from '../panels/SettingsPanel'
 
 type SidebarProps = {
   activeView: ActivityView
@@ -31,13 +32,7 @@ export function Sidebar({ activeView, selectedFileId, onSelectFile }: SidebarPro
           icon={Puzzle}
         />
       )}
-      {activeView === 'settings' && (
-        <PlaceholderPanel
-          title="Settings"
-          description="Customize themes, fonts, and editor preferences."
-          icon={Settings}
-        />
-      )}
+      {activeView === 'settings' && <SettingsPanel />}
     </aside>
   )
 }
