@@ -84,7 +84,49 @@ export const sakuraBlossom: ThemeDefinition = {
   },
 }
 
-export const THEMES: ThemeDefinition[] = [bloomDark, sakuraBlossom]
+export const lavenderDreams: ThemeDefinition = {
+  id: 'lavender-dreams',
+  name: 'Lavender Dreams',
+  emoji: '💜',
+  description: 'Cozy lavender fields — magical, premium night coding.',
+  mode: 'dark',
+  monacoThemeId: 'lavender-dreams',
+  tokens: {
+    bgPrimary: '#15131D',
+    bgSecondary: '#1F1A2B',
+    sidebar: '#251F36',
+    bgEditor: '#2A2340',
+    bgCard: '#322A48',
+    accentPrimary: '#C8A2FF',
+    accentSecondary: '#B388FF',
+    accentPurple: '#9B6DFF',
+    textPrimary: '#F7F3FF',
+    textSecondary: '#CBBFE5',
+    textMuted: '#8A7FA8',
+    success: '#8DECB4',
+    warning: '#FFD580',
+    error: '#FF9AA2',
+    bloomPink: '#D4B8FF',
+    bloomBlush: '#E8D9FF',
+    bloomLavender: '#C8A2FF',
+    bloomPurple: '#B388FF',
+    bloomLilac: '#DDD0FF',
+    borderSubtle: 'rgba(200, 162, 255, 0.14)',
+    glassBg: 'rgba(37, 31, 54, 0.72)',
+    navGlassBg: 'rgba(31, 26, 43, 0.82)',
+    shadowSoft: '0 4px 28px rgba(0, 0, 0, 0.35)',
+    shadowGlow: '0 0 24px rgba(200, 162, 255, 0.28)',
+    gridDot: 'rgba(200, 162, 255, 0.1)',
+    blobPink: 'rgba(200, 162, 255, 0.2)',
+    blobLavender: 'rgba(179, 136, 255, 0.18)',
+    blobPurple: 'rgba(155, 109, 255, 0.15)',
+    blobBlush: 'rgba(232, 217, 255, 0.08)',
+    hoverBg: 'rgba(200, 162, 255, 0.1)',
+    selectionBg: 'rgba(200, 162, 255, 0.16)',
+  },
+}
+
+export const THEMES: ThemeDefinition[] = [bloomDark, sakuraBlossom, lavenderDreams]
 
 export const DEFAULT_THEME_ID: ThemeId = 'bloom-dark'
 

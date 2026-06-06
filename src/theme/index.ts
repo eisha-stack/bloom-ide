@@ -1,5 +1,5 @@
 export type { ThemeDefinition, ThemeId, ThemeMode, ThemeTokens } from './types'
-export { THEMES, DEFAULT_THEME_ID, getThemeById, bloomDark, sakuraBlossom } from './themes'
+export { THEMES, DEFAULT_THEME_ID, getThemeById, bloomDark, sakuraBlossom, lavenderDreams } from './themes'
 export { applyTheme, tokensToCssVars } from './applyTheme'
 export { ThemeProvider, useTheme } from './ThemeProvider'
 export { initTheme, loadStoredThemeId } from './initTheme'

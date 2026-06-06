@@ -1,4 +1,4 @@
-export type ThemeId = 'bloom-dark' | 'sakura-blossom'
+export type ThemeId = 'bloom-dark' | 'sakura-blossom' | 'lavender-dreams'
 
 export type ThemeMode = 'dark' | 'light'
 

@@ -3,6 +3,7 @@ import type { editor } from 'monaco-editor'
 export const MONACO_THEME_IDS = {
   BLOOM_DARK: 'bloom-dark',
   SAKURA_BLOSSOM: 'sakura-blossom',
+  LAVENDER_DREAMS: 'lavender-dreams',
 } as const
 
 export const monacoThemes: Record<string, editor.IStandaloneThemeData> = {
@@ -82,6 +83,45 @@ export const monacoThemes: Record<string, editor.IStandaloneThemeData> = {
       'minimap.background': '#FFF7FA',
       'scrollbarSlider.background': '#FF85C125',
       'scrollbarSlider.hoverBackground': '#FF85C140',
+    },
+  },
+  [MONACO_THEME_IDS.LAVENDER_DREAMS]: {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      { token: 'comment', foreground: '8A7FA8', fontStyle: 'italic' },
+      { token: 'keyword', foreground: 'C8A2FF' },
+      { token: 'keyword.control', foreground: 'B388FF' },
+      { token: 'string', foreground: '8DECB4' },
+      { token: 'number', foreground: 'DDD0FF' },
+      { token: 'type', foreground: 'B388FF' },
+      { token: 'type.identifier', foreground: 'B388FF' },
+      { token: 'identifier', foreground: 'E8D9FF' },
+      { token: 'delimiter', foreground: 'CBBFE5' },
+      { token: 'operator', foreground: 'D4B8FF' },
+      { token: 'function', foreground: '9B6DFF' },
+      { token: 'variable', foreground: 'F7F3FF' },
+      { token: 'tag', foreground: 'C8A2FF' },
+      { token: 'attribute.name', foreground: 'B388FF' },
+      { token: 'attribute.value', foreground: '8DECB4' },
+    ],
+    colors: {
+      'editor.background': '#2A2340',
+      'editor.foreground': '#F7F3FF',
+      'editor.lineHighlightBackground': '#322A4855',
+      'editor.selectionBackground': '#C8A2FF35',
+      'editor.inactiveSelectionBackground': '#B388FF20',
+      'editorCursor.foreground': '#C8A2FF',
+      'editorLineNumber.foreground': '#8A7FA8',
+      'editorLineNumber.activeForeground': '#CBBFE5',
+      'editorIndentGuide.background': '#322A48',
+      'editorIndentGuide.activeBackground': '#C8A2FF35',
+      'editorGutter.background': '#2A2340',
+      'editorWidget.background': '#322A48',
+      'editorWidget.border': '#C8A2FF25',
+      'minimap.background': '#251F36',
+      'scrollbarSlider.background': '#C8A2FF20',
+      'scrollbarSlider.hoverBackground': '#C8A2FF40',
     },
   },
 }
