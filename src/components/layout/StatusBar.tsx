@@ -1,4 +1,5 @@
-import { AlertTriangle, CircleX, GitBranch, Sparkles } from 'lucide-react'
+import { AlertTriangle, CircleX, GitBranch } from 'lucide-react'
+import { BloomLogo } from '../ui/BloomLogo'
 
 type StatusBarProps = {
   branch?: string
@@ -24,7 +25,6 @@ export function StatusBar({
 
   return (
     <footer className="relative flex h-[24px] shrink-0 items-center justify-between overflow-hidden px-3 text-[11px] text-[var(--text-secondary)]">
-      {/* Gradient background */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[rgba(255,105,180,0.08)] via-[var(--bg-card)] to-[rgba(168,85,247,0.08)]"
@@ -53,13 +53,10 @@ export function StatusBar({
 
       <div className="relative flex items-center gap-3">
         <span className="flex items-center gap-1.5">
-          <Sparkles
-            size={11}
-            className={
-              aiStatus === 'ready'
-                ? 'text-[var(--bloom-lavender)] drop-shadow-[0_0_4px_rgba(168,85,247,0.5)]'
-                : 'text-[var(--text-muted)]'
-            }
+          <BloomLogo
+            size="xs"
+            glow={aiStatus === 'ready'}
+            className={aiStatus !== 'ready' ? 'opacity-50' : undefined}
           />
           {aiLabel}
         </span>

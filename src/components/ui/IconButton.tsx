@@ -1,7 +1,9 @@
 import type { LucideIcon } from 'lucide-react'
+import { BloomLogo } from './BloomLogo'
 
 type IconButtonProps = {
-  icon: LucideIcon
+  icon?: LucideIcon
+  useLogo?: boolean
   label: string
   active?: boolean
   accent?: boolean
@@ -10,6 +12,7 @@ type IconButtonProps = {
 
 export function IconButton({
   icon: Icon,
+  useLogo = false,
   label,
   active = false,
   accent = false,
@@ -36,17 +39,30 @@ export function IconButton({
           className="absolute left-0 h-5 w-[3px] rounded-r-full bg-[var(--accent-pink-glow)] shadow-[0_0_12px_rgba(255,105,180,0.35)]"
         />
       )}
-      <Icon
-        size={22}
-        strokeWidth={1.75}
-        className={[
-          'transition-transform duration-200 group-hover:scale-105',
-          active && 'drop-shadow-[0_0_8px_rgba(255,105,180,0.4)]',
-          accent && !active && 'text-[var(--bloom-lavender)]',
-        ]
-          .filter(Boolean)
-          .join(' ')}
-      />
+      {useLogo ? (
+        <BloomLogo
+          size="sm"
+          glow={active}
+          className={[
+            'transition-transform duration-200 group-hover:scale-105',
+            active && 'drop-shadow-[0_0_8px_rgba(255,105,180,0.4)]',
+          ].join(' ')}
+        />
+      ) : (
+        Icon && (
+          <Icon
+            size={22}
+            strokeWidth={1.75}
+            className={[
+              'transition-transform duration-200 group-hover:scale-105',
+              active && 'drop-shadow-[0_0_8px_rgba(255,105,180,0.4)]',
+              accent && !active && 'text-[var(--bloom-lavender)]',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          />
+        )
+      )}
     </button>
   )
 }

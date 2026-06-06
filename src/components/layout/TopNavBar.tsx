@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
-import { GitBranch, Search, Sparkles } from 'lucide-react'
+import { GitBranch, Search } from 'lucide-react'
+import { BloomLogo } from '../ui/BloomLogo'
 
 type TopNavBarProps = {
   projectName?: string
@@ -25,15 +26,8 @@ export function TopNavBar({
       }}
     >
       <div className="flex items-center gap-4">
-        {/* Logo */}
         <div className="flex shrink-0 items-center gap-2.5">
-          <div className="relative flex h-8 w-8 items-center justify-center rounded-[var(--radius-md)] bg-gradient-to-br from-[var(--bloom-blush)] to-[var(--bloom-purple)] shadow-[0_0_16px_rgba(255,105,180,0.25)]">
-            <Sparkles size={16} className="text-white" strokeWidth={2} />
-            <span
-              aria-hidden
-              className="pointer-events-none absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-[var(--bloom-lilac)] opacity-80"
-            />
-          </div>
+          <BloomLogo size="sm" glow />
           <span className="hidden font-[family-name:var(--font-heading)] text-[15px] font-semibold tracking-tight text-[var(--text-primary)] sm:inline">
             BloomCode
           </span>
@@ -41,12 +35,10 @@ export function TopNavBar({
 
         <div className="h-5 w-px bg-[var(--border-subtle)]" aria-hidden />
 
-        {/* Project name */}
         <span className="shrink-0 font-[family-name:var(--font-heading)] text-[13px] font-medium text-[var(--bloom-lilac)]">
           {projectName}
         </span>
 
-        {/* Search */}
         <div className="mx-auto flex min-w-0 max-w-md flex-1 items-center gap-2 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[rgba(42,36,56,0.5)] px-3 py-1.5 transition-[box-shadow,border-color] duration-200 focus-within:border-[rgba(168,85,247,0.35)] focus-within:shadow-[0_0_0_3px_rgba(168,85,247,0.12)]">
           <Search size={14} className="shrink-0 text-[var(--text-muted)]" />
           <input
@@ -58,7 +50,6 @@ export function TopNavBar({
           />
         </div>
 
-        {/* Git branch */}
         <button
           type="button"
           className="hidden items-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[rgba(42,36,56,0.4)] px-2.5 py-1.5 text-[12px] text-[var(--text-secondary)] transition-all duration-200 hover:border-[rgba(255,182,193,0.25)] hover:bg-[rgba(255,182,193,0.06)] hover:text-[var(--text-primary)] md:flex"
@@ -67,7 +58,6 @@ export function TopNavBar({
           {branch}
         </button>
 
-        {/* User avatar */}
         <button
           type="button"
           aria-label="User profile"

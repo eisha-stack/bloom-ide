@@ -3,7 +3,6 @@ import {
   Search,
   GitBranch,
   Puzzle,
-  Sparkles,
   Settings,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
@@ -12,7 +11,8 @@ import { IconButton } from '../ui/IconButton'
 
 type ActivityItem = {
   id: ActivityView
-  icon: LucideIcon
+  icon?: LucideIcon
+  useLogo?: boolean
   label: string
   accent?: boolean
   bottom?: boolean
@@ -23,7 +23,7 @@ const ACTIVITY_ITEMS: ActivityItem[] = [
   { id: 'search', icon: Search, label: 'Search' },
   { id: 'scm', icon: GitBranch, label: 'Source Control' },
   { id: 'extensions', icon: Puzzle, label: 'Extensions' },
-  { id: 'ai', icon: Sparkles, label: 'AI Assistant', accent: true },
+  { id: 'ai', useLogo: true, label: 'AI Assistant', accent: true },
   { id: 'settings', icon: Settings, label: 'Settings', bottom: true },
 ]
 
@@ -48,6 +48,7 @@ export function ActivityBar({ active, aiActive = false, onChange, scmBadge = 3 }
           <div key={item.id} className="relative">
             <IconButton
               icon={item.icon}
+              useLogo={item.useLogo}
               label={item.label}
               active={item.id === 'ai' ? aiActive : active === item.id}
               accent={item.accent}
@@ -67,6 +68,7 @@ export function ActivityBar({ active, aiActive = false, onChange, scmBadge = 3 }
           <IconButton
             key={item.id}
             icon={item.icon}
+            useLogo={item.useLogo}
             label={item.label}
             active={active === item.id}
             onClick={() => onChange(item.id)}

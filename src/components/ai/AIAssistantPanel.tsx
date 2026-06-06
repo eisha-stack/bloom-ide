@@ -4,12 +4,12 @@ import {
   Code2,
   Lightbulb,
   Send,
-  Sparkles,
   Wand2,
   X,
   Zap,
 } from 'lucide-react'
 import { useState } from 'react'
+import { BloomLogo } from '../ui/BloomLogo'
 
 const SUGGESTED_PROMPTS = [
   { label: 'Explain this function', icon: Lightbulb },
@@ -70,9 +70,7 @@ export function AIAssistantPanel({ open, onClose, activeFileName }: AIAssistantP
           {/* Header */}
           <div className="flex shrink-0 items-center justify-between border-b border-[var(--border-subtle)] px-4 py-3">
             <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-[var(--radius-sm)] bg-gradient-to-br from-[var(--bloom-blush)] to-[var(--accent-purple-glow)] shadow-[0_0_12px_rgba(255,105,180,0.2)]">
-                <Sparkles size={14} className="text-white" />
-              </div>
+              <BloomLogo size="sm" glow />
               <h2 className="m-0 font-[family-name:var(--font-heading)] text-[13px] font-semibold text-[var(--text-primary)]">
                 AI Assistant
               </h2>
@@ -125,11 +123,8 @@ export function AIAssistantPanel({ open, onClose, activeFileName }: AIAssistantP
                 ].join(' ')}
               >
                 {msg.role === 'assistant' && (
-                  <Sparkles
-                    size={11}
-                    className="mb-1 inline text-[var(--bloom-lavender)]"
-                  />
-                )}{' '}
+                  <BloomLogo size="xs" className="mb-0.5 mr-1 inline align-middle" alt="" />
+                )}
                 {msg.content}
               </motion.div>
             ))}
