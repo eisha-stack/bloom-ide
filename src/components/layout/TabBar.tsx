@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion'
 import { X } from 'lucide-react'
-import type { OpenTab } from '../../types/ide'
+import type { EditorDocument } from '../../editor/types'
 import { getFileIcon } from '../../utils/fileIcons'
 
 type TabBarProps = {
-  tabs: OpenTab[]
+  tabs: EditorDocument[]
   activeTabId: string | null
   onSelect: (id: string) => void
   onClose: (id: string) => void
@@ -49,7 +49,14 @@ export function TabBar({ tabs, activeTabId, onSelect, onClose }: TabBarProps) {
                   isActive ? 'text-[var(--bloom-lavender)]' : 'text-[var(--text-muted)]',
                 ].join(' ')}
               />
-              <span className="truncate text-[12px]">{tab.name}</span>
+              <span className="truncate text-[12px]">
+                {tab.isDirty && (
+                  <span aria-hidden className="mr-1 text-[var(--accent-primary)]">
+                    ●
+                  </span>
+                )}
+                {tab.name}
+              </span>
             </button>
             <button
               type="button"

@@ -1,36 +1,18 @@
-import { MonacoEditorPane } from '../editor/MonacoEditorPane'
+import { MonacoEditor } from '../../editor/MonacoEditor'
+import { useEditor } from '../../editor/EditorProvider'
 import { LandingEmptyState } from '../landing/LandingEmptyState'
 import type { LandingActionId } from '../landing/landingActions'
 
 type EditorAreaProps = {
-  fileName: string | null
-  language: string | null
-  content: string
-  onChange: (value: string) => void
-  onCursorChange?: (line: number, column: number) => void
   onLandingAction?: (action: LandingActionId) => void
 }
 
-export function EditorArea({
-  fileName,
-  language,
-  content,
-  onChange,
-  onCursorChange,
-  onLandingAction,
-}: EditorAreaProps) {
-  if (!fileName || !language) {
+export function EditorArea({ onLandingAction }: EditorAreaProps) {
+  const { activeTab } = useEditor()
+
+  if (!activeTab) {
     return <LandingEmptyState onAction={(action) => onLandingAction?.(action)} />
   }
 
-  return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[var(--bg-editor)]">
-      <MonacoEditorPane
-        value={content}
-        language={language}
-        onChange={onChange}
-        onCursorChange={onCursorChange}
-      />
-    </div>
-  )
+  return <MonacoEditor />
 }

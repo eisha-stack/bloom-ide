@@ -96,6 +96,31 @@ export const mockFileTree: FileNode[] = [
     language: 'typescript',
   },
   {
+    id: 'examples',
+    name: 'examples',
+    type: 'folder',
+    children: [
+      {
+        id: 'hello-py',
+        name: 'hello.py',
+        type: 'file',
+        language: 'python',
+      },
+      {
+        id: 'hello-java',
+        name: 'Hello.java',
+        type: 'file',
+        language: 'java',
+      },
+      {
+        id: 'utils-js',
+        name: 'utils.js',
+        type: 'file',
+        language: 'javascript',
+      },
+    ],
+  },
+  {
     id: 'vite-config',
     name: 'vite.config.ts',
     type: 'file',
@@ -200,5 +225,28 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
 })
+`,
+  'hello-py': `"""Bloom IDE — Python example"""
+
+
+def greet(name: str) -> str:
+    return f"Hello, {name}! Welcome to BloomCode."
+
+
+if __name__ == "__main__":
+    print(greet("developer"))
+`,
+  'hello-java': `public class Hello {
+    public static void main(String[] args) {
+        System.out.println("Hello from BloomCode!");
+    }
+}
+`,
+  'utils-js': `/** @typedef {{ id: string; name: string }} Item */
+
+/** @param {Item[]} items */
+export function sortByName(items) {
+  return [...items].sort((a, b) => a.name.localeCompare(b.name))
+}
 `,
 }

@@ -14,9 +14,4 @@ export type FileNode = {
   language?: string
 }
 
-export type OpenTab = {
-  id: string
-  name: string
-  language: string
-  content: string
-}
+export type { EditorDocument as OpenTab } from '../editor/types'

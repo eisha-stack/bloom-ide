@@ -1,7 +1,8 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
+import { EditorProvider, useEditor, languageLabel } from '../../editor'
 import type { LandingActionId } from '../landing/landingActions'
 import { mockFileContents, mockFileTree } from '../../data/mockFileTree'
-import type { ActivityView, FileNode, OpenTab } from '../../types/ide'
+import type { ActivityView } from '../../types/ide'
 import { findFileById } from '../../utils/findFileById'
 import { AIAssistantPanel } from '../ai/AIAssistantPanel'
 import { ActivityBar } from './ActivityBar'
@@ -11,37 +12,14 @@ import { StatusBar } from './StatusBar'
 import { TabBar } from './TabBar'
 import { TopNavBar } from './TopNavBar'
 
-function fileToTab(node: FileNode): OpenTab {
-  return {
-    id: node.id,
-    name: node.name,
-    language: node.language ?? 'plaintext',
-    content: mockFileContents[node.id] ?? `// ${node.name}\n`,
-  }
+function getFileContent(fileId: string, _fileName: string): string {
+  return mockFileContents[fileId] ?? `// ${_fileName}\n`
 }
 
-export function IDEShell() {
+function IDEShellInner() {
   const [activeView, setActiveView] = useState<ActivityView>('explorer')
   const [aiPanelOpen, setAiPanelOpen] = useState(false)
-  const [openTabs, setOpenTabs] = useState<OpenTab[]>([])
-  const [activeTabId, setActiveTabId] = useState<string | null>(null)
-  const [cursor, setCursor] = useState({ line: 1, column: 1 })
-
-  const activeTab = useMemo(
-    () => openTabs.find((tab) => tab.id === activeTabId) ?? null,
-    [openTabs, activeTabId],
-  )
-
-  const openFileNode = useCallback((node: FileNode) => {
-    if (node.type !== 'file') return
-
-    const tab = fileToTab(node)
-    setOpenTabs((prev) => {
-      if (prev.some((t) => t.id === tab.id)) return prev
-      return [...prev, tab]
-    })
-    setActiveTabId(tab.id)
-  }, [])
+  const { tabs, activeTabId, activeTab, openFile, closeTab, selectTab } = useEditor()
 
   const handleActivityChange = useCallback((view: ActivityView) => {
     if (view === 'ai') {
@@ -51,42 +29,12 @@ export function IDEShell() {
     setActiveView(view)
   }, [])
 
-  const handleSelectFile = useCallback(
-    (node: FileNode) => openFileNode(node),
-    [openFileNode],
-  )
-
-  const handleCloseTab = useCallback(
-    (id: string) => {
-      setOpenTabs((prev) => {
-        const next = prev.filter((tab) => tab.id !== id)
-        if (activeTabId === id) {
-          const closedIndex = prev.findIndex((tab) => tab.id === id)
-          const fallback = next[closedIndex] ?? next[closedIndex - 1] ?? null
-          setActiveTabId(fallback?.id ?? null)
-        }
-        return next
-      })
-    },
-    [activeTabId],
-  )
-
-  const handleContentChange = useCallback(
-    (value: string) => {
-      if (!activeTabId) return
-      setOpenTabs((prev) =>
-        prev.map((tab) => (tab.id === activeTabId ? { ...tab, content: value } : tab)),
-      )
-    },
-    [activeTabId],
-  )
-
   const handleLandingAction = useCallback(
     (action: LandingActionId) => {
       switch (action) {
         case 'new-project': {
           const file = findFileById(mockFileTree, 'app-tsx')
-          if (file) openFileNode(file)
+          if (file) openFile(file)
           break
         }
         case 'open-folder':
@@ -94,7 +42,7 @@ export function IDEShell() {
           break
         case 'clone': {
           const file = findFileById(mockFileTree, 'readme')
-          if (file) openFileNode(file)
+          if (file) openFile(file)
           break
         }
         case 'continue-ai':
@@ -102,7 +50,7 @@ export function IDEShell() {
           break
       }
     },
-    [openFileNode],
+    [openFile],
   )
 
   return (
@@ -119,28 +67,21 @@ export function IDEShell() {
         <Sidebar
           activeView={activeView}
           selectedFileId={activeTabId}
-          onSelectFile={handleSelectFile}
+          onSelectFile={openFile}
         />
 
         <div className="flex min-w-0 flex-1 flex-col">
           <TabBar
-            tabs={openTabs}
+            tabs={tabs}
             activeTabId={activeTabId}
-            onSelect={setActiveTabId}
-            onClose={handleCloseTab}
+            onSelect={selectTab}
+            onClose={closeTab}
           />
-          <EditorArea
-            fileName={activeTab?.name ?? null}
-            language={activeTab?.language ?? null}
-            content={activeTab?.content ?? ''}
-            onChange={handleContentChange}
-            onCursorChange={(line, column) => setCursor({ line, column })}
-            onLandingAction={handleLandingAction}
-          />
+          <EditorArea onLandingAction={handleLandingAction} />
           <StatusBar
-            language={activeTab?.language}
-            line={cursor.line}
-            column={cursor.column}
+            language={activeTab ? languageLabel(activeTab.language) : null}
+            line={activeTab?.cursor.line ?? 1}
+            column={activeTab?.cursor.column ?? 1}
           />
         </div>
 
@@ -151,5 +92,13 @@ export function IDEShell() {
         />
       </div>
     </div>
+  )
+}
+
+export function IDEShell() {
+  return (
+    <EditorProvider getFileContent={getFileContent}>
+      <IDEShellInner />
+    </EditorProvider>
   )
 }
