@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
-import { EditorProvider, useEditor, languageLabel } from '../../editor'
+import { useEditor, languageLabel } from '../../editor'
 import type { LandingActionId } from '../landing/landingActions'
-import { mockFileContents, mockFileTree } from '../../data/mockFileTree'
+import { mockFileTree } from '../../data/mockFileTree'
 import type { ActivityView } from '../../types/ide'
 import { findFileById } from '../../utils/findFileById'
 import { AIAssistantPanel } from '../ai/AIAssistantPanel'
@@ -12,14 +12,10 @@ import { StatusBar } from './StatusBar'
 import { TabBar } from './TabBar'
 import { TopNavBar } from './TopNavBar'
 
-function getFileContent(fileId: string, _fileName: string): string {
-  return mockFileContents[fileId] ?? `// ${_fileName}\n`
-}
-
-function IDEShellInner() {
+export function IDEShell() {
   const [activeView, setActiveView] = useState<ActivityView>('explorer')
   const [aiPanelOpen, setAiPanelOpen] = useState(false)
-  const { tabs, activeTabId, activeTab, openFile, closeTab, selectTab } = useEditor()
+  const { activeTabId, activeTab, openFile } = useEditor()
 
   const handleActivityChange = useCallback((view: ActivityView) => {
     if (view === 'ai') {
@@ -71,12 +67,7 @@ function IDEShellInner() {
         />
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <TabBar
-            tabs={tabs}
-            activeTabId={activeTabId}
-            onSelect={selectTab}
-            onClose={closeTab}
-          />
+          <TabBar />
           <EditorArea onLandingAction={handleLandingAction} />
           <StatusBar
             language={activeTab ? languageLabel(activeTab.language) : null}
@@ -92,13 +83,5 @@ function IDEShellInner() {
         />
       </div>
     </div>
-  )
-}
-
-export function IDEShell() {
-  return (
-    <EditorProvider getFileContent={getFileContent}>
-      <IDEShellInner />
-    </EditorProvider>
   )
 }

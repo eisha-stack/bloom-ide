@@ -157,6 +157,28 @@ button:focus-visible {
   mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, black 20%, transparent 75%);
 }
 
+.editor-tab-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle) transparent;
+}
+
+.editor-tab-scroll::-webkit-scrollbar {
+  height: 3px;
+}
+
+.editor-tab-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.editor-tab-scroll::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 999px;
+}
+
+.editor-tab-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -1,4 +1,4 @@
-export { EditorProvider, useEditor } from './EditorProvider'
+export { useEditor, useEditorStore, useActiveTab } from '../stores/editorStore'
 export { MonacoEditor } from './MonacoEditor'
 export {
   SUPPORTED_LANGUAGES,
@@ -12,7 +12,6 @@ export { useMonacoModels } from './useMonacoModels'
 export type {
   EditorDocument,
   EditorLanguage,
-  EditorContextValue,
   OpenDocumentInput,
   CursorPosition,
 } from './types'

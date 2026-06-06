@@ -2,7 +2,7 @@ import Editor, { type OnMount } from '@monaco-editor/react'
 import type { editor } from 'monaco-editor'
 import { useCallback, useEffect, useRef } from 'react'
 import { useTheme } from '../theme/ThemeProvider'
-import { useEditor } from './EditorProvider'
+import { useEditor } from './useEditor'
 import { toMonacoLanguage } from './languageRegistry'
 import { initializeMonaco } from './monacoSetup'
 

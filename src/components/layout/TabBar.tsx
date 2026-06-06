@@ -1,89 +1,116 @@
-import { motion } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
 import { X } from 'lucide-react'
 import type { EditorDocument } from '../../editor/types'
+import { useEditorStore } from '../../stores/editorStore'
 import { getFileIcon } from '../../utils/fileIcons'
 
-type TabBarProps = {
-  tabs: EditorDocument[]
-  activeTabId: string | null
-  onSelect: (id: string) => void
-  onClose: (id: string) => void
+type EditorTabProps = {
+  tab: EditorDocument
+  isActive: boolean
 }
 
-export function TabBar({ tabs, activeTabId, onSelect, onClose }: TabBarProps) {
+function EditorTab({ tab, isActive }: EditorTabProps) {
+  const [hovered, setHovered] = useState(false)
+  const selectTab = useEditorStore((s) => s.selectTab)
+  const closeTab = useEditorStore((s) => s.closeTab)
+  const FileIcon = getFileIcon(tab.name)
+
+  const showClose = isActive || hovered
+  const showDirtyDot = tab.isDirty && !showClose
+
+  return (
+    <div
+      role="tab"
+      aria-selected={isActive}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className={[
+        'group relative flex h-[35px] max-w-[200px] min-w-[120px] shrink-0 cursor-pointer items-center',
+        'border-r border-[var(--border-subtle)] transition-colors duration-150',
+        isActive
+          ? 'z-[1] -mb-px border-t-2 border-t-[var(--accent-primary)] bg-[var(--bg-editor)] text-[var(--text-primary)]'
+          : 'border-t-2 border-t-transparent bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--hover-bg)]',
+      ].join(' ')}
+      onClick={() => selectTab(tab.id)}
+      onMouseDown={(e) => {
+        if (e.button === 1) {
+          e.preventDefault()
+          closeTab(tab.id)
+        }
+      }}
+    >
+      <div className="flex min-w-0 flex-1 items-center gap-1.5 pl-2.5 pr-1">
+        <FileIcon
+          size={14}
+          className={[
+            'shrink-0',
+            isActive ? 'text-[var(--bloom-lavender)]' : 'text-[var(--text-muted)]',
+          ].join(' ')}
+        />
+        <span className="min-w-0 flex-1 truncate text-[12px] leading-none">{tab.name}</span>
+      </div>
+
+      <div className="mr-1.5 flex h-5 w-5 shrink-0 items-center justify-center">
+        {showDirtyDot && (
+          <span
+            aria-label="Unsaved changes"
+            className="h-2 w-2 rounded-full bg-[var(--accent-primary)]"
+          />
+        )}
+        {showClose && (
+          <button
+            type="button"
+            aria-label={`Close ${tab.name}`}
+            onClick={(e) => {
+              e.stopPropagation()
+              closeTab(tab.id)
+            }}
+            className={[
+              'flex h-5 w-5 items-center justify-center rounded-[var(--radius-sm)]',
+              'text-[var(--text-muted)] transition-colors duration-150',
+              'hover:bg-[var(--hover-bg)] hover:text-[var(--text-primary)]',
+              !isActive && 'opacity-0 group-hover:opacity-100',
+            ].join(' ')}
+          >
+            <X size={14} strokeWidth={1.75} />
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export function TabBar() {
+  const tabs = useEditorStore((s) => s.tabs)
+  const activeTabId = useEditorStore((s) => s.activeTabId)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const activeTabRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    activeTabRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' })
+  }, [activeTabId])
+
   if (tabs.length === 0) return null
 
   return (
     <div
+      className="shrink-0 border-b border-[var(--border-subtle)] bg-[var(--bg-secondary)]"
       role="tablist"
       aria-label="Open editors"
-      className="flex shrink-0 items-end gap-1 overflow-x-auto bg-[var(--bg-sidebar)] px-2 pt-2"
     >
-      {tabs.map((tab) => {
-        const isActive = tab.id === activeTabId
-        const FileIcon = getFileIcon(tab.name)
-
-        return (
-          <motion.div
-            key={tab.id}
-            role="tab"
-            aria-selected={isActive}
-            layout
-            initial={false}
-            className={[
-              'group relative flex max-w-[200px] shrink-0 items-center gap-1.5 rounded-t-[var(--radius-md)] px-3 py-2 transition-colors duration-200',
-              isActive
-                ? 'bg-[var(--bg-editor)] text-[var(--text-primary)] shadow-[0_-2px_12px_rgba(255,105,180,0.08)]'
-                : 'bg-[rgba(42,36,56,0.4)] text-[var(--text-muted)] hover:bg-[rgba(42,36,56,0.7)] hover:text-[var(--text-secondary)]',
-            ].join(' ')}
-          >
-            <button
-              type="button"
-              onClick={() => onSelect(tab.id)}
-              className="flex min-w-0 flex-1 items-center gap-1.5"
-            >
-              <FileIcon
-                size={14}
-                className={[
-                  'shrink-0',
-                  isActive ? 'text-[var(--bloom-lavender)]' : 'text-[var(--text-muted)]',
-                ].join(' ')}
-              />
-              <span className="truncate text-[12px]">
-                {tab.isDirty && (
-                  <span aria-hidden className="mr-1 text-[var(--accent-primary)]">
-                    ●
-                  </span>
-                )}
-                {tab.name}
-              </span>
-            </button>
-            <button
-              type="button"
-              aria-label={`Close ${tab.name}`}
-              onClick={(e) => {
-                e.stopPropagation()
-                onClose(tab.id)
-              }}
-              className={[
-                'flex h-5 w-5 shrink-0 items-center justify-center rounded-[var(--radius-sm)] transition-all duration-150',
-                'opacity-0 group-hover:opacity-100',
-                'hover:bg-[rgba(255,182,193,0.12)] hover:text-[var(--bloom-blush)]',
-                isActive && 'opacity-70',
-              ].join(' ')}
-            >
-              <X size={12} />
-            </button>
-            {isActive && (
-              <motion.span
-                layoutId="tab-underline"
-                aria-hidden
-                className="pointer-events-none absolute inset-x-2 bottom-0 h-[2px] rounded-full bg-gradient-to-r from-[var(--accent-pink-glow)] to-[var(--accent-purple-glow)] shadow-[0_0_8px_rgba(255,105,180,0.4)]"
-              />
-            )}
-          </motion.div>
-        )
-      })}
+      <div
+        ref={scrollRef}
+        className="editor-tab-scroll flex h-[35px] overflow-x-auto overflow-y-hidden"
+      >
+        {tabs.map((tab) => {
+          const isActive = tab.id === activeTabId
+          return (
+            <div key={tab.id} ref={isActive ? activeTabRef : undefined}>
+              <EditorTab tab={tab} isActive={isActive} />
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
