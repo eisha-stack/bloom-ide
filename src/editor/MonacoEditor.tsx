@@ -27,6 +27,8 @@ const EDITOR_OPTIONS: editor.IStandaloneEditorConstructionOptions = {
   formatOnPaste: true,
   quickSuggestions: true,
   suggestOnTriggerCharacters: true,
+  occurrencesHighlight: 'off',
+  selectionHighlight: false,
 }
 
 export function MonacoEditor() {

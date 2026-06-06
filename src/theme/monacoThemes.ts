@@ -6,6 +6,14 @@ export const MONACO_THEME_IDS = {
   LAVENDER_DREAMS: 'lavender-dreams',
 } as const
 
+/** Prevent the secondary boxed highlight on matching symbols (e.g. on `args`) */
+const NO_WORD_HIGHLIGHT: editor.IColors = {
+  'editor.wordHighlightBackground': '#00000000',
+  'editor.wordHighlightBorder': '#00000000',
+  'editor.wordHighlightStrongBackground': '#00000000',
+  'editor.wordHighlightStrongBorder': '#00000000',
+}
+
 export const monacoThemes: Record<string, editor.IStandaloneThemeData> = {
   [MONACO_THEME_IDS.BLOOM_DARK]: {
     base: 'vs-dark',
@@ -28,6 +36,7 @@ export const monacoThemes: Record<string, editor.IStandaloneThemeData> = {
       { token: 'attribute.value', foreground: '86EFAC' },
     ],
     colors: {
+      ...NO_WORD_HIGHLIGHT,
       'editor.background': '#211D2E',
       'editor.foreground': '#F5F0FA',
       'editor.lineHighlightBackground': '#2A243855',
@@ -67,6 +76,7 @@ export const monacoThemes: Record<string, editor.IStandaloneThemeData> = {
       { token: 'attribute.value', foreground: '5BAF5B' },
     ],
     colors: {
+      ...NO_WORD_HIGHLIGHT,
       'editor.background': '#FFFBFC',
       'editor.foreground': '#4A2B3D',
       'editor.lineHighlightBackground': '#FFE8F080',
@@ -106,6 +116,7 @@ export const monacoThemes: Record<string, editor.IStandaloneThemeData> = {
       { token: 'attribute.value', foreground: '8DECB4' },
     ],
     colors: {
+      ...NO_WORD_HIGHLIGHT,
       'editor.background': '#2A2340',
       'editor.foreground': '#F7F3FF',
       'editor.lineHighlightBackground': '#322A4855',
