@@ -4,6 +4,7 @@ import type { LandingActionId } from '../landing/landingActions'
 import { mockFileTree } from '../../data/mockFileTree'
 import type { ActivityView } from '../../types/ide'
 import { findFileById } from '../../utils/findFileById'
+import { openFolder as openFolderDialog, isTauri } from '../../lib/tauri'
 import { AIAssistantPanel } from '../ai/AIAssistantPanel'
 import { ActivityBar } from './ActivityBar'
 import { EditorArea } from './EditorArea'
@@ -34,7 +35,11 @@ export function IDEShell() {
           break
         }
         case 'open-folder':
-          setActiveView('explorer')
+          if (isTauri()) {
+            void openFolderDialog()
+          } else {
+            setActiveView('explorer')
+          }
           break
         case 'clone': {
           const file = findFileById(mockFileTree, 'readme')

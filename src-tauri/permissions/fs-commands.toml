@@ -1,0 +1,53 @@
+[[permission]]
+identifier = "allow-open-folder"
+description = "Allows opening a workspace folder via native dialog"
+commands.allow = ["open_folder"]
+
+[[permission]]
+identifier = "allow-get-workspace"
+description = "Allows reading the current workspace path"
+commands.allow = ["get_workspace"]
+
+[[permission]]
+identifier = "allow-read-file"
+description = "Allows reading files within the workspace"
+commands.allow = ["read_file"]
+
+[[permission]]
+identifier = "allow-write-file"
+description = "Allows writing files within the workspace"
+commands.allow = ["write_file"]
+
+[[permission]]
+identifier = "allow-create-file"
+description = "Allows creating files within the workspace"
+commands.allow = ["create_file"]
+
+[[permission]]
+identifier = "allow-delete-file"
+description = "Allows deleting files within the workspace"
+commands.allow = ["delete_file"]
+
+[[permission]]
+identifier = "allow-rename-file"
+description = "Allows renaming files within the workspace"
+commands.allow = ["rename_file"]
+
+[[permission]]
+identifier = "allow-list-dir"
+description = "Allows listing directories within the workspace"
+commands.allow = ["list_dir"]
+
+[[set]]
+identifier = "fs-commands"
+description = "Bloom IDE scoped filesystem commands"
+permissions = [
+    "allow-open-folder",
+    "allow-get-workspace",
+    "allow-read-file",
+    "allow-write-file",
+    "allow-create-file",
+    "allow-delete-file",
+    "allow-rename-file",
+    "allow-list-dir",
+]

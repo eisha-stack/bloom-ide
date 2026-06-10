@@ -5,7 +5,7 @@ declare module '*?worker' {
   export default workerConstructor
 }
 
-declare module '*?worker&inline' {
-  const workerConstructor: new () => Worker
-  export default workerConstructor
+declare module '*?url' {
+  const url: string
+  export default url
 }
