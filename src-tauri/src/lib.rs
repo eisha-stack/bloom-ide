@@ -1,10 +1,12 @@
 mod fs;
+mod git;
 mod terminal;
 
 use fs::{
     create_file, delete_file, get_workspace, list_dir, open_folder, read_file, rename_file,
     write_file, WorkspaceState,
 };
+use git::{git_create_commit, git_get_status, git_stage_all_files, git_stage_files};
 use terminal::{
     terminal_execute, terminal_kill, terminal_list_shells, terminal_resize, terminal_spawn,
     terminal_write, TerminalManager,
@@ -41,6 +43,10 @@ pub fn run() {
             terminal_resize,
             terminal_kill,
             terminal_execute,
+            git_get_status,
+            git_stage_all_files,
+            git_stage_files,
+            git_create_commit,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

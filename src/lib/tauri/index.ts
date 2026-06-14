@@ -11,6 +11,7 @@ export {
   listDir,
 } from './fs'
 export { terminalApi } from './terminal'
+export { gitApi, getGitStatus, stageAllFiles, stageFiles, createCommit } from './git'
 export type {
   ShellKind,
   ShellInfo,
@@ -20,5 +21,6 @@ export type {
   CommandOutputEvent,
   CommandExitEvent,
 } from './terminal'
+export type { GitStatusResponse, GitFileChange, GitChangeGroup, GitCommitResponse } from './git'
 export type { FsCommandError, DirEntry, FsErrorCode } from './types'
 export { FS_ERROR_CODES } from './types'

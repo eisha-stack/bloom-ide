@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useEditor, languageLabel } from '../../editor'
 import { TerminalPanel } from '../terminal/TerminalPanel'
 import { useAutoSave } from '../../hooks/useAutoSave'
@@ -10,6 +10,7 @@ import type { ActivityView, FileNode } from '../../types/ide'
 import { findFileById } from '../../utils/findFileById'
 import { isTauri } from '../../lib/tauri'
 import { useWorkspace } from '../../stores/workspaceStore'
+import { useScm } from '../../stores/scmStore'
 import { AIAssistantPanel } from '../ai/AIAssistantPanel'
 import { ActivityBar } from './ActivityBar'
 import { EditorArea } from './EditorArea'
@@ -22,11 +23,22 @@ export function IDEShell() {
   const [activeView, setActiveView] = useState<ActivityView>('explorer')
   const [aiPanelOpen, setAiPanelOpen] = useState(false)
   const { activeTabId, activeTab, openFile, openFileAsync, saveStatus } = useEditor()
-  const { projectName, openWorkspace } = useWorkspace()
+  const { projectName, openWorkspace, workspacePath } = useWorkspace()
+  const { changeCount, refresh: refreshScm, status: scmStatus } = useScm()
 
   useEditorShortcuts()
   useAutoSave()
   useTerminalShortcuts()
+
+  useEffect(() => {
+    void refreshScm()
+  }, [workspacePath, refreshScm])
+
+  useEffect(() => {
+    if (activeView === 'scm') {
+      void refreshScm()
+    }
+  }, [activeView, refreshScm])
 
   const handleOpenFolder = useCallback(async () => {
     await openWorkspace()
@@ -78,13 +90,14 @@ export function IDEShell() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-[var(--bg-main)] text-[var(--text-primary)]">
-      <TopNavBar projectName={projectName} branch="main" />
+      <TopNavBar projectName={projectName} branch={scmStatus?.branch ?? undefined} />
 
       <div className="flex min-h-0 flex-1">
         <ActivityBar
           active={activeView}
           aiActive={aiPanelOpen}
           onChange={handleActivityChange}
+          scmBadge={changeCount}
         />
 
         <Sidebar

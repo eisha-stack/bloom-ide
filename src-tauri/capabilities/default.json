@@ -8,6 +8,7 @@
     "dialog:default",
     "fs-commands",
     "terminal-commands",
+    "git-commands",
     "core:event:default"
   ]
 }

@@ -10,7 +10,7 @@ type TopNavBarProps = {
 
 export function TopNavBar({
   projectName = 'bloom-ide',
-  branch = 'main',
+  branch,
   onSearch,
 }: TopNavBarProps) {
   return (
@@ -50,13 +50,15 @@ export function TopNavBar({
           />
         </div>
 
-        <button
-          type="button"
-          className="hidden items-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[rgba(42,36,56,0.4)] px-2.5 py-1.5 text-[12px] text-[var(--text-secondary)] transition-all duration-200 hover:border-[rgba(255,182,193,0.25)] hover:bg-[rgba(255,182,193,0.06)] hover:text-[var(--text-primary)] md:flex"
-        >
-          <GitBranch size={13} className="text-[var(--bloom-lavender)]" />
-          {branch}
-        </button>
+        {branch && (
+          <button
+            type="button"
+            className="hidden items-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[rgba(42,36,56,0.4)] px-2.5 py-1.5 text-[12px] text-[var(--text-secondary)] transition-all duration-200 hover:border-[rgba(255,182,193,0.25)] hover:bg-[rgba(255,182,193,0.06)] hover:text-[var(--text-primary)] md:flex"
+          >
+            <GitBranch size={13} className="text-[var(--bloom-lavender)]" />
+            {branch}
+          </button>
+        )}
 
         <button
           type="button"

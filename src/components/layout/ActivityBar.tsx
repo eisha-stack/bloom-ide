@@ -34,7 +34,7 @@ type ActivityBarProps = {
   scmBadge?: number
 }
 
-export function ActivityBar({ active, aiActive = false, onChange, scmBadge = 3 }: ActivityBarProps) {
+export function ActivityBar({ active, aiActive = false, onChange, scmBadge = 0 }: ActivityBarProps) {
   const topItems = ACTIVITY_ITEMS.filter((item) => !item.bottom)
   const bottomItems = ACTIVITY_ITEMS.filter((item) => item.bottom)
 

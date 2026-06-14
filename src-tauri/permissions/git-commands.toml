@@ -1,0 +1,23 @@
+[[permission]]
+identifier = "allow-git-status"
+description = "Allows reading git status for the workspace"
+commands.allow = ["git_get_status"]
+
+[[permission]]
+identifier = "allow-git-stage"
+description = "Allows staging files for commit"
+commands.allow = ["git_stage_all_files", "git_stage_files"]
+
+[[permission]]
+identifier = "allow-git-commit"
+description = "Allows creating git commits"
+commands.allow = ["git_create_commit"]
+
+[[set]]
+identifier = "git-commands"
+description = "Bloom IDE git source control commands"
+permissions = [
+    "allow-git-status",
+    "allow-git-stage",
+    "allow-git-commit",
+]
