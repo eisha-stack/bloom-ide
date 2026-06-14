@@ -61,7 +61,8 @@ fn resolve_shell(shell: &str) -> Result<(String, Vec<String>), TerminalError> {
             }
             "powershell" | "pwsh" => {
                 if let Some(path) = find_powershell() {
-                    Ok((path, vec!["-NoLogo".into()]))
+                    // No extra args — ConPTY provides an interactive session.
+                    Ok((path, vec![]))
                 } else {
                     Err(TerminalError::UnsupportedShell(
                         "PowerShell was not found on this system.".into(),
@@ -205,6 +206,8 @@ impl TerminalManager {
             cmd.arg(arg);
         }
         cmd.cwd(&cwd_path);
+        cmd.env("TERM", "xterm-256color");
+        cmd.env("COLORTERM", "truecolor");
 
         let child = pair
             .slave
@@ -258,10 +261,10 @@ impl TerminalManager {
             .get(session_id)
             .ok_or_else(|| TerminalError::NotFound(session_id.into()))?;
 
-        session
-            .writer
-            .lock()
+        let mut writer = session.writer.lock();
+        writer
             .write_all(data.as_bytes())
+            .and_then(|_| writer.flush())
             .map_err(|error| TerminalError::WriteFailed(error.to_string()))?;
         Ok(())
     }

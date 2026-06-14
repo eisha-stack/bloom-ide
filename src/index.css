@@ -189,9 +189,13 @@ button:focus-visible {
 }
 
 .monaco-editor-host .xterm,
+.terminal-xterm-host .xterm-helper-textarea {
+  z-index: 10;
+}
+
 .terminal-xterm-host .xterm {
   height: 100%;
-  padding: 0;
+  width: 100%;
 }
 
 .terminal-xterm-host .xterm-viewport {
