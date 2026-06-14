@@ -16,7 +16,6 @@ function EditorTab({ tab, isActive }: EditorTabProps) {
   const FileIcon = getFileIcon(tab.name)
 
   const showClose = isActive || hovered
-  const showDirtyDot = tab.isDirty && !showClose
 
   return (
     <div
@@ -47,16 +46,17 @@ function EditorTab({ tab, isActive }: EditorTabProps) {
             isActive ? 'text-[var(--bloom-lavender)]' : 'text-[var(--text-muted)]',
           ].join(' ')}
         />
-        <span className="min-w-0 flex-1 truncate text-[12px] leading-none">{tab.name}</span>
+        <span className="min-w-0 flex-1 truncate text-[12px] leading-none">
+          {tab.isDirty && (
+            <span className="mr-0.5 text-[var(--accent-primary)]" aria-hidden>
+              ●
+            </span>
+          )}
+          {tab.name}
+        </span>
       </div>
 
       <div className="mr-1.5 flex h-5 w-5 shrink-0 items-center justify-center">
-        {showDirtyDot && (
-          <span
-            aria-label="Unsaved changes"
-            className="h-2 w-2 rounded-full bg-[var(--accent-primary)]"
-          />
-        )}
         {showClose && (
           <button
             type="button"

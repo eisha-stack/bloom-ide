@@ -19,7 +19,9 @@ export type EditorDocument = {
   name: string
   language: EditorLanguage | string
   content: string
+  savedContent: string
   isDirty: boolean
+  isWorkspaceFile: boolean
   cursor: CursorPosition
 }
 
@@ -28,4 +30,5 @@ export type OpenDocumentInput = {
   name: string
   language?: string
   content: string
+  isWorkspaceFile?: boolean
 }

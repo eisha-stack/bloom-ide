@@ -2,18 +2,26 @@ import { create } from 'zustand'
 import { mockFileContents } from '../data/mockFileTree'
 import { resolveLanguage } from '../editor/languageRegistry'
 import type { EditorDocument, OpenDocumentInput } from '../editor/types'
-import { isTauri, readFile } from '../lib/tauri'
+import { isTauri, readFile, writeFile } from '../lib/tauri'
 import type { FileNode } from '../types/ide'
+
+export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
 type EditorStore = {
   tabs: EditorDocument[]
   activeTabId: string | null
   openingFileId: string | null
   openFileError: string | null
+  savingTabId: string | null
+  saveError: string | null
+  saveStatus: SaveStatus
   openDocument: (input: OpenDocumentInput) => void
   openFile: (node: FileNode) => void
   openFileAsync: (node: FileNode) => Promise<void>
   clearOpenFileError: () => void
+  clearSaveError: () => void
+  saveTab: (id: string) => Promise<boolean>
+  saveActiveTab: () => Promise<boolean>
   closeTab: (id: string) => void
   selectTab: (id: string) => void
   updateContent: (id: string, content: string) => void
@@ -21,13 +29,17 @@ type EditorStore = {
   markSaved: (id: string) => void
 }
 
+let saveStatusTimer: ReturnType<typeof setTimeout> | null = null
+
 function createDocument(input: OpenDocumentInput): EditorDocument {
   return {
     id: input.id,
     name: input.name,
     language: resolveLanguage(input.name, input.language),
     content: input.content,
+    savedContent: input.content,
     isDirty: false,
+    isWorkspaceFile: input.isWorkspaceFile ?? false,
     cursor: { line: 1, column: 1 },
   }
 }
@@ -52,13 +64,36 @@ function resolveFileContent(fileId: string, fileName: string): string {
   return mockFileContents[fileId] ?? getDefaultContent(fileName)
 }
 
+function fsErrorMessage(error: unknown): string {
+  if (typeof error === 'object' && error !== null && 'message' in error) {
+    return String((error as { message: string }).message)
+  }
+  if (error instanceof Error) return error.message
+  return 'Failed to save file.'
+}
+
+function setSaveStatus(set: (partial: Partial<EditorStore>) => void, status: SaveStatus) {
+  if (saveStatusTimer) clearTimeout(saveStatusTimer)
+  set({ saveStatus: status })
+  if (status === 'saved') {
+    saveStatusTimer = setTimeout(() => {
+      set({ saveStatus: 'idle' })
+      saveStatusTimer = null
+    }, 2000)
+  }
+}
+
 export const useEditorStore = create<EditorStore>((set, get) => ({
   tabs: [],
   activeTabId: null,
   openingFileId: null,
   openFileError: null,
+  savingTabId: null,
+  saveError: null,
+  saveStatus: 'idle',
 
   clearOpenFileError: () => set({ openFileError: null }),
+  clearSaveError: () => set({ saveError: null, saveStatus: 'idle' }),
 
   openDocument: (input) => {
     const { tabs } = get()
@@ -80,6 +115,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       name: node.name,
       language: node.language,
       content: resolveFileContent(node.id, node.name),
+      isWorkspaceFile: false,
     })
   },
 
@@ -105,6 +141,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
         name: node.name,
         language: node.language,
         content,
+        isWorkspaceFile: isTauri(),
       })
     } catch (error) {
       const message =
@@ -118,6 +155,50 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     } finally {
       set({ openingFileId: null })
     }
+  },
+
+  saveTab: async (id) => {
+    const tab = get().tabs.find((t) => t.id === id)
+    if (!tab || !tab.isDirty) return true
+    if (get().savingTabId === id) return true
+
+    if (!tab.isWorkspaceFile) {
+      set({
+        saveError: 'Demo files cannot be saved. Open a folder in the desktop app to edit real files.',
+        saveStatus: 'error',
+      })
+      return false
+    }
+
+    if (!isTauri()) {
+      set({
+        saveError: 'Saving requires the BloomCode desktop app.',
+        saveStatus: 'error',
+      })
+      return false
+    }
+
+    set({ savingTabId: id, saveError: null })
+    setSaveStatus(set, 'saving')
+
+    try {
+      await writeFile(tab.id, tab.content)
+      get().markSaved(id)
+      set({ savingTabId: null })
+      setSaveStatus(set, 'saved')
+      return true
+    } catch (error) {
+      const message = fsErrorMessage(error)
+      set({ savingTabId: null, saveError: message })
+      setSaveStatus(set, 'error')
+      return false
+    }
+  },
+
+  saveActiveTab: async () => {
+    const { activeTabId } = get()
+    if (!activeTabId) return false
+    return get().saveTab(activeTabId)
   },
 
   closeTab: (id) => {
@@ -139,7 +220,9 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   updateContent: (id, content) => {
     set({
       tabs: get().tabs.map((tab) =>
-        tab.id === id ? { ...tab, content, isDirty: true } : tab,
+        tab.id === id
+          ? { ...tab, content, isDirty: tab.savedContent !== content }
+          : tab,
       ),
     })
   },
@@ -156,7 +239,9 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
 
   markSaved: (id) => {
     set({
-      tabs: get().tabs.map((tab) => (tab.id === id ? { ...tab, isDirty: false } : tab)),
+      tabs: get().tabs.map((tab) =>
+        tab.id === id ? { ...tab, isDirty: false, savedContent: tab.content } : tab,
+      ),
     })
   },
 }))
@@ -174,10 +259,16 @@ export function useEditor() {
   const activeTab = useActiveTab()
   const openingFileId = useEditorStore((s) => s.openingFileId)
   const openFileError = useEditorStore((s) => s.openFileError)
+  const savingTabId = useEditorStore((s) => s.savingTabId)
+  const saveError = useEditorStore((s) => s.saveError)
+  const saveStatus = useEditorStore((s) => s.saveStatus)
   const openDocument = useEditorStore((s) => s.openDocument)
   const openFile = useEditorStore((s) => s.openFile)
   const openFileAsync = useEditorStore((s) => s.openFileAsync)
   const clearOpenFileError = useEditorStore((s) => s.clearOpenFileError)
+  const clearSaveError = useEditorStore((s) => s.clearSaveError)
+  const saveTab = useEditorStore((s) => s.saveTab)
+  const saveActiveTab = useEditorStore((s) => s.saveActiveTab)
   const closeTab = useEditorStore((s) => s.closeTab)
   const selectTab = useEditorStore((s) => s.selectTab)
   const updateContent = useEditorStore((s) => s.updateContent)
@@ -190,10 +281,16 @@ export function useEditor() {
     activeTab,
     openingFileId,
     openFileError,
+    savingTabId,
+    saveError,
+    saveStatus,
     openDocument,
     openFile,
     openFileAsync,
     clearOpenFileError,
+    clearSaveError,
+    saveTab,
+    saveActiveTab,
     closeTab,
     selectTab,
     updateContent,

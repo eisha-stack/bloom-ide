@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=block');
 @import 'tailwindcss';
 
 @theme {
@@ -177,6 +178,14 @@ button:focus-visible {
 
 .editor-tab-scroll::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
+}
+
+/* Keep Monaco glyph metrics aligned with the editor font (avoids caret drift). */
+.monaco-editor-host .monaco-editor,
+.monaco-editor-host .monaco-editor .margin,
+.monaco-editor-host .monaco-editor .inputarea.ime-input {
+  font-family: var(--font-mono) !important;
+  font-variant-ligatures: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

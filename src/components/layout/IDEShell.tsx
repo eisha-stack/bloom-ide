@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react'
 import { useEditor, languageLabel } from '../../editor'
+import { useAutoSave } from '../../hooks/useAutoSave'
+import { useEditorShortcuts } from '../../hooks/useEditorShortcuts'
 import type { LandingActionId } from '../landing/landingActions'
 import { mockFileTree } from '../../data/mockFileTree'
 import type { ActivityView, FileNode } from '../../types/ide'
@@ -17,8 +19,11 @@ import { TopNavBar } from './TopNavBar'
 export function IDEShell() {
   const [activeView, setActiveView] = useState<ActivityView>('explorer')
   const [aiPanelOpen, setAiPanelOpen] = useState(false)
-  const { activeTabId, activeTab, openFile, openFileAsync } = useEditor()
+  const { activeTabId, activeTab, openFile, openFileAsync, saveStatus } = useEditor()
   const { projectName, openWorkspace } = useWorkspace()
+
+  useEditorShortcuts()
+  useAutoSave()
 
   const handleOpenFolder = useCallback(async () => {
     await openWorkspace()
@@ -93,6 +98,8 @@ export function IDEShell() {
             language={activeTab ? languageLabel(activeTab.language) : null}
             line={activeTab?.cursor.line ?? 1}
             column={activeTab?.cursor.column ?? 1}
+            saveStatus={saveStatus}
+            isDirty={activeTab?.isDirty ?? false}
           />
         </div>
 

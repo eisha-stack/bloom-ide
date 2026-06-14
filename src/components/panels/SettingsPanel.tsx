@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
-import { Check, Palette } from 'lucide-react'
+import { Check, Palette, Save } from 'lucide-react'
+import { useSettings } from '../../stores/settingsStore'
 import { useTheme } from '../../theme/ThemeProvider'
 import type { ThemeDefinition, ThemeId } from '../../theme/types'
 
@@ -85,6 +86,7 @@ function ThemeCard({
 
 export function SettingsPanel() {
   const { themeId, setThemeId, themes } = useTheme()
+  const { autoSave, setAutoSave } = useSettings()
 
   return (
     <div className="flex h-full flex-col overflow-y-auto">
@@ -116,6 +118,32 @@ export function SettingsPanel() {
               />
             ))}
           </div>
+        </section>
+
+        <section className="mt-6">
+          <div className="mb-3 flex items-center gap-2">
+            <Save size={14} className="text-[var(--bloom-lavender)]" />
+            <h3 className="m-0 text-[13px] font-semibold text-[var(--text-primary)]">Editor</h3>
+          </div>
+
+          <label className="flex cursor-pointer items-start justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--border-subtle)] p-3 transition-colors hover:bg-[var(--hover-bg)]">
+            <div>
+              <p className="m-0 text-[12px] font-medium text-[var(--text-primary)]">Auto-save</p>
+              <p className="m-0 mt-1 text-[11px] leading-relaxed text-[var(--text-muted)]">
+                Automatically save workspace files 1.5s after you stop typing. Manual save with{' '}
+                <kbd className="rounded border border-[var(--border-subtle)] px-1 py-0.5 font-mono text-[10px]">
+                  Ctrl+S
+                </kbd>{' '}
+                always works.
+              </p>
+            </div>
+            <input
+              type="checkbox"
+              checked={autoSave}
+              onChange={(e) => setAutoSave(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent-primary)]"
+            />
+          </label>
         </section>
 
         <section className="mt-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] p-3">

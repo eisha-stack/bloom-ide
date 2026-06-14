@@ -40,7 +40,11 @@ function OpeningFileHint({ fileName }: { fileName?: string }) {
 }
 
 export function EditorArea({ onLandingAction }: EditorAreaProps) {
-  const { activeTab, openingFileId, openFileError, clearOpenFileError } = useEditor()
+  const { activeTab, openingFileId, openFileError, saveError, clearOpenFileError, clearSaveError } =
+    useEditor()
+
+  const editorError = openFileError ?? saveError
+  const dismissError = openFileError ? clearOpenFileError : clearSaveError
 
   if (!activeTab) {
     return (
@@ -51,9 +55,9 @@ export function EditorArea({ onLandingAction }: EditorAreaProps) {
             <p className="m-0 text-[13px] text-[var(--text-secondary)]">Opening file…</p>
           </div>
         )}
-        {openFileError && (
+        {editorError && (
           <div className="absolute inset-x-0 top-0 z-20 px-4 pt-4">
-            <EditorErrorBanner message={openFileError} onDismiss={clearOpenFileError} />
+            <EditorErrorBanner message={editorError} onDismiss={dismissError} />
           </div>
         )}
         {!openingFileId && (
@@ -65,9 +69,7 @@ export function EditorArea({ onLandingAction }: EditorAreaProps) {
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
-      {openFileError && (
-        <EditorErrorBanner message={openFileError} onDismiss={clearOpenFileError} />
-      )}
+      {editorError && <EditorErrorBanner message={editorError} onDismiss={dismissError} />}
       <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
         <MonacoEditor />
         {openingFileId && openingFileId !== activeTab.id && (
