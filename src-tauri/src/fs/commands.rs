@@ -10,13 +10,12 @@ use super::types::DirEntry;
 
 /// Open a folder via native dialog and set it as the workspace root.
 #[tauri::command]
-pub async fn open_folder(app: AppHandle, state: State<'_, WorkspaceState>) -> CommandResult<Option<String>> {
+pub fn open_folder(app: AppHandle, state: State<'_, WorkspaceState>) -> CommandResult<Option<String>> {
     let picked = app
         .dialog()
         .file()
         .set_title("Open Folder")
-        .pick_folder()
-        .await;
+        .blocking_pick_folder();
 
     let Some(file_path) = picked else {
         return Ok(None);
