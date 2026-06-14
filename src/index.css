@@ -188,6 +188,16 @@ button:focus-visible {
   font-variant-ligatures: none;
 }
 
+.monaco-editor-host .xterm,
+.terminal-xterm-host .xterm {
+  height: 100%;
+  padding: 0;
+}
+
+.terminal-xterm-host .xterm-viewport {
+  background: transparent !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

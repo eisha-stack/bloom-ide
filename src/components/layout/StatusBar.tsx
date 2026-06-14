@@ -1,5 +1,6 @@
-import { AlertTriangle, CircleX, GitBranch, Loader2 } from 'lucide-react'
+import { AlertTriangle, CircleX, GitBranch, Loader2, TerminalSquare } from 'lucide-react'
 import type { SaveStatus } from '../../stores/editorStore'
+import { useTerminalStore } from '../../stores/terminalStore'
 import { BloomLogo } from '../ui/BloomLogo'
 
 type StatusBarProps = {
@@ -25,6 +26,9 @@ export function StatusBar({
   saveStatus = 'idle',
   isDirty = false,
 }: StatusBarProps) {
+  const toggleTerminal = useTerminalStore((s) => s.togglePanel)
+  const terminalOpen = useTerminalStore((s) => s.panelOpen)
+
   const aiLabel =
     aiStatus === 'ready' ? 'AI Ready' : aiStatus === 'thinking' ? 'AI Thinking…' : 'AI Offline'
 
@@ -90,6 +94,19 @@ export function StatusBar({
         </span>
 
         {language && <span className="capitalize">{language}</span>}
+
+        <button
+          type="button"
+          onClick={() => toggleTerminal()}
+          className={[
+            'flex items-center gap-1 rounded px-1.5 py-0.5 transition-colors hover:bg-[var(--hover-bg)]',
+            terminalOpen ? 'text-[var(--bloom-lilac)]' : '',
+          ].join(' ')}
+          title="Toggle terminal (Ctrl+`)"
+        >
+          <TerminalSquare size={11} />
+          Terminal
+        </button>
 
         <span>
           Ln {line}, Col {column}

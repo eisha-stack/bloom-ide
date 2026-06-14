@@ -1,7 +1,9 @@
 import { useCallback, useState } from 'react'
 import { useEditor, languageLabel } from '../../editor'
+import { TerminalPanel } from '../terminal/TerminalPanel'
 import { useAutoSave } from '../../hooks/useAutoSave'
 import { useEditorShortcuts } from '../../hooks/useEditorShortcuts'
+import { useTerminalShortcuts } from '../../hooks/useTerminalShortcuts'
 import type { LandingActionId } from '../landing/landingActions'
 import { mockFileTree } from '../../data/mockFileTree'
 import type { ActivityView, FileNode } from '../../types/ide'
@@ -24,6 +26,7 @@ export function IDEShell() {
 
   useEditorShortcuts()
   useAutoSave()
+  useTerminalShortcuts()
 
   const handleOpenFolder = useCallback(async () => {
     await openWorkspace()
@@ -94,6 +97,7 @@ export function IDEShell() {
         <div className="flex min-w-0 flex-1 flex-col min-h-0 overflow-hidden">
           <TabBar />
           <EditorArea onLandingAction={handleLandingAction} />
+          <TerminalPanel />
           <StatusBar
             language={activeTab ? languageLabel(activeTab.language) : null}
             line={activeTab?.cursor.line ?? 1}

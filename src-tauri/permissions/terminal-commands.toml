@@ -1,0 +1,41 @@
+[[permission]]
+identifier = "allow-terminal-list-shells"
+description = "Allows listing available terminal shells"
+commands.allow = ["terminal_list_shells"]
+
+[[permission]]
+identifier = "allow-terminal-spawn"
+description = "Allows spawning interactive terminal sessions"
+commands.allow = ["terminal_spawn"]
+
+[[permission]]
+identifier = "allow-terminal-write"
+description = "Allows writing input to terminal sessions"
+commands.allow = ["terminal_write"]
+
+[[permission]]
+identifier = "allow-terminal-resize"
+description = "Allows resizing terminal sessions"
+commands.allow = ["terminal_resize"]
+
+[[permission]]
+identifier = "allow-terminal-kill"
+description = "Allows closing terminal sessions"
+commands.allow = ["terminal_kill"]
+
+[[permission]]
+identifier = "allow-terminal-execute"
+description = "Allows executing commands with streamed output"
+commands.allow = ["terminal_execute"]
+
+[[set]]
+identifier = "terminal-commands"
+description = "Bloom IDE terminal commands"
+permissions = [
+    "allow-terminal-list-shells",
+    "allow-terminal-spawn",
+    "allow-terminal-write",
+    "allow-terminal-resize",
+    "allow-terminal-kill",
+    "allow-terminal-execute",
+]

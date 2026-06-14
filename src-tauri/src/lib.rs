@@ -1,8 +1,13 @@
 mod fs;
+mod terminal;
 
 use fs::{
     create_file, delete_file, get_workspace, list_dir, open_folder, read_file, rename_file,
     write_file, WorkspaceState,
+};
+use terminal::{
+    terminal_execute, terminal_kill, terminal_list_shells, terminal_resize, terminal_spawn,
+    terminal_write, TerminalManager,
 };
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -10,6 +15,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .manage(WorkspaceState::default())
+        .manage(TerminalManager::default())
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
@@ -29,6 +35,12 @@ pub fn run() {
             delete_file,
             rename_file,
             list_dir,
+            terminal_list_shells,
+            terminal_spawn,
+            terminal_write,
+            terminal_resize,
+            terminal_kill,
+            terminal_execute,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

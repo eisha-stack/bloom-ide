@@ -23,6 +23,9 @@ thiserror = "2"
 tauri = { version = "2.11.2", features = [] }
 tauri-plugin-dialog = "2"
 tauri-plugin-log = "2"
+portable-pty = "0.9"
+uuid = { version = "1", features = ["v4"] }
+parking_lot = "0.12"
 
 # crates.io brotli 8.0.3 pins alloc-no-stdlib 2.x while brotli-decompressor uses 3.x.
 # Git master widens the range so Cargo unifies on one version (fix for rustc 1.96+).

@@ -6,6 +6,8 @@
   "permissions": [
     "core:default",
     "dialog:default",
-    "fs-commands"
+    "fs-commands",
+    "terminal-commands",
+    "core:event:default"
   ]
 }
