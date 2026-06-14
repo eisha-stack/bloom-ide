@@ -2,9 +2,10 @@ import { useCallback, useState } from 'react'
 import { useEditor, languageLabel } from '../../editor'
 import type { LandingActionId } from '../landing/landingActions'
 import { mockFileTree } from '../../data/mockFileTree'
-import type { ActivityView } from '../../types/ide'
+import type { ActivityView, FileNode } from '../../types/ide'
 import { findFileById } from '../../utils/findFileById'
-import { openFolder as openFolderDialog, isTauri } from '../../lib/tauri'
+import { isTauri } from '../../lib/tauri'
+import { useWorkspace } from '../../stores/workspaceStore'
 import { AIAssistantPanel } from '../ai/AIAssistantPanel'
 import { ActivityBar } from './ActivityBar'
 import { EditorArea } from './EditorArea'
@@ -16,7 +17,20 @@ import { TopNavBar } from './TopNavBar'
 export function IDEShell() {
   const [activeView, setActiveView] = useState<ActivityView>('explorer')
   const [aiPanelOpen, setAiPanelOpen] = useState(false)
-  const { activeTabId, activeTab, openFile } = useEditor()
+  const { activeTabId, activeTab, openFile, openFileAsync } = useEditor()
+  const { projectName, openWorkspace } = useWorkspace()
+
+  const handleOpenFolder = useCallback(async () => {
+    await openWorkspace()
+    setActiveView('explorer')
+  }, [openWorkspace])
+
+  const handleSelectFile = useCallback(
+    (node: FileNode) => {
+      void openFileAsync(node)
+    },
+    [openFileAsync],
+  )
 
   const handleActivityChange = useCallback((view: ActivityView) => {
     if (view === 'ai') {
@@ -36,7 +50,7 @@ export function IDEShell() {
         }
         case 'open-folder':
           if (isTauri()) {
-            void openFolderDialog()
+            void handleOpenFolder()
           } else {
             setActiveView('explorer')
           }
@@ -51,12 +65,12 @@ export function IDEShell() {
           break
       }
     },
-    [openFile],
+    [openFile, handleOpenFolder],
   )
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-[var(--bg-main)] text-[var(--text-primary)]">
-      <TopNavBar projectName="bloom-ide" branch="main" />
+      <TopNavBar projectName={projectName} branch="main" />
 
       <div className="flex min-h-0 flex-1">
         <ActivityBar
@@ -68,10 +82,11 @@ export function IDEShell() {
         <Sidebar
           activeView={activeView}
           selectedFileId={activeTabId}
-          onSelectFile={openFile}
+          onSelectFile={handleSelectFile}
+          onOpenFolder={() => void handleOpenFolder()}
         />
 
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex min-w-0 flex-1 flex-col min-h-0 overflow-hidden">
           <TabBar />
           <EditorArea onLandingAction={handleLandingAction} />
           <StatusBar

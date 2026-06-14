@@ -2,13 +2,18 @@ import { create } from 'zustand'
 import { mockFileContents } from '../data/mockFileTree'
 import { resolveLanguage } from '../editor/languageRegistry'
 import type { EditorDocument, OpenDocumentInput } from '../editor/types'
+import { isTauri, readFile } from '../lib/tauri'
 import type { FileNode } from '../types/ide'
 
 type EditorStore = {
   tabs: EditorDocument[]
   activeTabId: string | null
+  openingFileId: string | null
+  openFileError: string | null
   openDocument: (input: OpenDocumentInput) => void
   openFile: (node: FileNode) => void
+  openFileAsync: (node: FileNode) => Promise<void>
+  clearOpenFileError: () => void
   closeTab: (id: string) => void
   selectTab: (id: string) => void
   updateContent: (id: string, content: string) => void
@@ -50,6 +55,10 @@ function resolveFileContent(fileId: string, fileName: string): string {
 export const useEditorStore = create<EditorStore>((set, get) => ({
   tabs: [],
   activeTabId: null,
+  openingFileId: null,
+  openFileError: null,
+
+  clearOpenFileError: () => set({ openFileError: null }),
 
   openDocument: (input) => {
     const { tabs } = get()
@@ -72,6 +81,43 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       language: node.language,
       content: resolveFileContent(node.id, node.name),
     })
+  },
+
+  openFileAsync: async (node) => {
+    if (node.type !== 'file') return
+
+    const { tabs } = get()
+    const exists = tabs.some((tab) => tab.id === node.id)
+    if (exists) {
+      set({ activeTabId: node.id, openFileError: null, openingFileId: null })
+      return
+    }
+
+    set({ openingFileId: node.id, openFileError: null })
+
+    try {
+      const content = isTauri()
+        ? await readFile(node.id)
+        : resolveFileContent(node.id, node.name)
+
+      get().openDocument({
+        id: node.id,
+        name: node.name,
+        language: node.language,
+        content,
+      })
+    } catch (error) {
+      const message =
+        typeof error === 'object' && error !== null && 'message' in error
+          ? String((error as { message: string }).message)
+          : error instanceof Error
+            ? error.message
+            : 'Failed to open file.'
+
+      set({ openFileError: message })
+    } finally {
+      set({ openingFileId: null })
+    }
   },
 
   closeTab: (id) => {
@@ -126,8 +172,12 @@ export function useEditor() {
   const tabs = useEditorStore((s) => s.tabs)
   const activeTabId = useEditorStore((s) => s.activeTabId)
   const activeTab = useActiveTab()
+  const openingFileId = useEditorStore((s) => s.openingFileId)
+  const openFileError = useEditorStore((s) => s.openFileError)
   const openDocument = useEditorStore((s) => s.openDocument)
   const openFile = useEditorStore((s) => s.openFile)
+  const openFileAsync = useEditorStore((s) => s.openFileAsync)
+  const clearOpenFileError = useEditorStore((s) => s.clearOpenFileError)
   const closeTab = useEditorStore((s) => s.closeTab)
   const selectTab = useEditorStore((s) => s.selectTab)
   const updateContent = useEditorStore((s) => s.updateContent)
@@ -138,8 +188,12 @@ export function useEditor() {
     tabs,
     activeTabId,
     activeTab,
+    openingFileId,
+    openFileError,
     openDocument,
     openFile,
+    openFileAsync,
+    clearOpenFileError,
     closeTab,
     selectTab,
     updateContent,

@@ -5,6 +5,7 @@ export type EditorLanguage =
   | 'java'
   | 'json'
   | 'css'
+  | 'html'
   | 'markdown'
   | 'plaintext'
 

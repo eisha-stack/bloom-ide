@@ -9,13 +9,18 @@ type SidebarProps = {
   activeView: ActivityView
   selectedFileId: string | null
   onSelectFile: (node: FileNode) => void
+  onOpenFolder?: () => void
 }
 
-export function Sidebar({ activeView, selectedFileId, onSelectFile }: SidebarProps) {
+export function Sidebar({ activeView, selectedFileId, onSelectFile, onOpenFolder }: SidebarProps) {
   return (
     <aside className="flex w-[260px] shrink-0 flex-col border-r border-[var(--border-subtle)] bg-[var(--bg-sidebar)]">
       {activeView === 'explorer' && (
-        <FileExplorer selectedId={selectedFileId} onSelectFile={onSelectFile} />
+        <FileExplorer
+          selectedId={selectedFileId}
+          onSelectFile={onSelectFile}
+          onOpenFolder={onOpenFolder}
+        />
       )}
       {activeView === 'search' && <SearchPanel />}
       {activeView === 'scm' && (

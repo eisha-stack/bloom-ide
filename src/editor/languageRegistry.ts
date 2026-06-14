@@ -8,6 +8,7 @@ export const SUPPORTED_LANGUAGES: EditorLanguage[] = [
   'java',
   'json',
   'css',
+  'html',
   'markdown',
   'plaintext',
 ]
@@ -24,6 +25,8 @@ const EXTENSION_MAP: Record<string, EditorLanguage> = {
   java: 'java',
   json: 'json',
   css: 'css',
+  html: 'html',
+  htm: 'html',
   md: 'markdown',
   markdown: 'markdown',
 }
@@ -53,6 +56,7 @@ export function languageLabel(lang: string): string {
     java: 'Java',
     json: 'JSON',
     css: 'CSS',
+    html: 'HTML',
     markdown: 'Markdown',
     plaintext: 'Plain Text',
   }

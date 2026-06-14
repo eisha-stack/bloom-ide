@@ -1,6 +1,6 @@
 import Editor, { type OnMount } from '@monaco-editor/react'
 import type { editor } from 'monaco-editor'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTheme } from '../theme/ThemeProvider'
 import { useEditor } from './useEditor'
 import { toMonacoLanguage } from './languageRegistry'
@@ -31,11 +31,34 @@ const EDITOR_OPTIONS: editor.IStandaloneEditorConstructionOptions = {
   selectionHighlight: false,
 }
 
+function toEditorPath(tabId: string): string {
+  return `bloom://${encodeURIComponent(tabId).replace(/%/g, '_')}`
+}
+
 export function MonacoEditor() {
   const { activeTab, activeTabId, updateContent, updateCursor } = useEditor()
   const { monacoThemeId } = useTheme()
+  const containerRef = useRef<HTMLDivElement>(null)
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
   const monacoRef = useRef<typeof import('monaco-editor') | null>(null)
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+
+  useEffect(() => {
+    const element = containerRef.current
+    if (!element) return
+
+    const updateSize = () => {
+      const { width, height } = element.getBoundingClientRect()
+      if (width > 0 && height > 0) {
+        setDimensions({ width, height })
+      }
+    }
+
+    updateSize()
+    const observer = new ResizeObserver(updateSize)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [activeTabId])
 
   const handleBeforeMount = useCallback((monaco: typeof import('monaco-editor')) => {
     monacoRef.current = monaco
@@ -58,6 +81,8 @@ export function MonacoEditor() {
       editorInstance.onDidChangeCursorPosition((e) => {
         updateCursor(e.position.lineNumber, e.position.column)
       })
+
+      requestAnimationFrame(() => editorInstance.layout())
     },
     [activeTab, monacoThemeId, updateCursor],
   )
@@ -72,30 +97,36 @@ export function MonacoEditor() {
       lineNumber: activeTab.cursor.line,
       column: activeTab.cursor.column,
     })
-  }, [activeTabId]) // restore cursor when switching tabs
+    requestAnimationFrame(() => editorRef.current?.layout())
+  }, [activeTabId, activeTab])
 
   if (!activeTab || !activeTabId) return null
 
-  const editorPath = `bloom://${activeTab.id}/${activeTab.name}`
-
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[var(--bg-editor)]">
-      <Editor
-        height="100%"
-        path={editorPath}
-        defaultValue={activeTab.content}
-        language={toMonacoLanguage(activeTab.language)}
-        theme={monacoThemeId}
-        beforeMount={handleBeforeMount}
-        onMount={handleMount}
-        onChange={(value) => updateContent(activeTabId, value ?? '')}
-        options={EDITOR_OPTIONS}
-        loading={
-          <div className="flex h-full items-center justify-center text-[13px] text-[var(--text-muted)]">
-            Loading editor…
-          </div>
-        }
-      />
+    <div
+      ref={containerRef}
+      className="min-h-0 flex-1 overflow-hidden bg-[var(--bg-editor)]"
+    >
+      {dimensions.height > 0 && dimensions.width > 0 && (
+        <Editor
+          key={activeTabId}
+          height={dimensions.height}
+          width={dimensions.width}
+          path={toEditorPath(activeTabId)}
+          value={activeTab.content}
+          language={toMonacoLanguage(activeTab.language)}
+          theme={monacoThemeId}
+          beforeMount={handleBeforeMount}
+          onMount={handleMount}
+          onChange={(value) => updateContent(activeTabId, value ?? '')}
+          options={EDITOR_OPTIONS}
+          loading={
+            <div className="flex h-full items-center justify-center text-[13px] text-[var(--text-muted)]">
+              Loading editor…
+            </div>
+          }
+        />
+      )}
     </div>
   )
 }
