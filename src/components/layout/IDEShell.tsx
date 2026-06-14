@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useEditor, languageLabel } from '../../editor'
 import { TerminalPanel } from '../terminal/TerminalPanel'
 import { useAutoSave } from '../../hooks/useAutoSave'
@@ -88,6 +88,16 @@ export function IDEShell() {
     [openFile, handleOpenFolder],
   )
 
+  const aiContext = useMemo(
+    () => ({
+      activeFileName: activeTab?.name ?? null,
+      activeFileContent: activeTab?.content ?? null,
+      workspacePath,
+      language: activeTab?.language ?? null,
+    }),
+    [activeTab?.name, activeTab?.content, activeTab?.language, workspacePath],
+  )
+
   return (
     <div className="flex h-full flex-col overflow-hidden bg-[var(--bg-main)] text-[var(--text-primary)]">
       <TopNavBar projectName={projectName} branch={scmStatus?.branch ?? undefined} />
@@ -123,7 +133,7 @@ export function IDEShell() {
         <AIAssistantPanel
           open={aiPanelOpen}
           onClose={() => setAiPanelOpen(false)}
-          activeFileName={activeTab?.name}
+          context={aiContext}
         />
       </div>
     </div>
