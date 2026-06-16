@@ -115,7 +115,7 @@ export function FileExplorer({ selectedId, onSelectFile, onOpenFolder }: FileExp
 
       <div className="min-h-0 flex-1 overflow-y-auto px-1 pb-3">
         <div className="glass-panel mx-2 p-1.5">
-          <p className="m-0 px-2 py-1.5 font-[family-name:var(--font-heading)] text-[12px] font-semibold text-[var(--bloom-lilac)]">
+          <p className="m-0 px-2 py-1.5 font-[family-name:var(--font-heading)] text-[12px] font-semibold text-[var(--text-primary)]">
             {projectName}
           </p>
 

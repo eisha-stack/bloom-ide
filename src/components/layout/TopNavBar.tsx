@@ -35,11 +35,11 @@ export function TopNavBar({
 
         <div className="h-5 w-px bg-[var(--border-subtle)]" aria-hidden />
 
-        <span className="shrink-0 font-[family-name:var(--font-heading)] text-[13px] font-medium text-[var(--bloom-lilac)]">
+        <span className="shrink-0 font-[family-name:var(--font-heading)] text-[13px] font-semibold text-[var(--text-primary)]">
           {projectName}
         </span>
 
-        <div className="mx-auto flex min-w-0 max-w-md flex-1 items-center gap-2 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[rgba(42,36,56,0.5)] px-3 py-1.5 transition-[box-shadow,border-color] duration-200 focus-within:border-[rgba(168,85,247,0.35)] focus-within:shadow-[0_0_0_3px_rgba(168,85,247,0.12)]">
+        <div className="mx-auto flex min-w-0 max-w-md flex-1 items-center gap-2 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-1.5 transition-[box-shadow,border-color] duration-200 focus-within:border-[rgba(168,85,247,0.35)] focus-within:shadow-[0_0_0_3px_rgba(168,85,247,0.12)]">
           <Search size={14} className="shrink-0 text-[var(--text-muted)]" />
           <input
             type="search"
@@ -53,7 +53,7 @@ export function TopNavBar({
         {branch && (
           <button
             type="button"
-            className="hidden items-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[rgba(42,36,56,0.4)] px-2.5 py-1.5 text-[12px] text-[var(--text-secondary)] transition-all duration-200 hover:border-[rgba(255,182,193,0.25)] hover:bg-[rgba(255,182,193,0.06)] hover:text-[var(--text-primary)] md:flex"
+            className="hidden items-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-card)] px-2.5 py-1.5 text-[12px] text-[var(--text-secondary)] transition-all duration-200 hover:border-[rgba(255,182,193,0.25)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-primary)] md:flex"
           >
             <GitBranch size={13} className="text-[var(--bloom-lavender)]" />
             {branch}
