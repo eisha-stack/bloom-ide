@@ -1,11 +1,8 @@
 import { create } from 'zustand'
 import { getAIProvider } from '../lib/ai'
-import type {
-  AIProviderId,
-  ChatContext,
-  ChatMessage,
-  Conversation,
-} from '../lib/ai'
+import { collectLLMContext } from '../lib/ai/context'
+import type { LLMContext, ChatMessage, Conversation } from '../lib/ai'
+import { getAISettingsConfig } from './settingsStore'
 
 const WELCOME_MESSAGE: ChatMessage = {
   id: 'welcome',
@@ -37,7 +34,6 @@ function createConversation(title = 'New chat'): Conversation {
 }
 
 type AiStore = {
-  providerId: AIProviderId
   conversations: Conversation[]
   activeConversationId: string | null
   inputDraft: string
@@ -46,13 +42,12 @@ type AiStore = {
   abortController: AbortController | null
   showHistory: boolean
 
-  setProviderId: (id: AIProviderId) => void
   setInputDraft: (value: string) => void
   setShowHistory: (show: boolean) => void
   createNewConversation: () => void
   selectConversation: (id: string) => void
   deleteConversation: (id: string) => void
-  sendMessage: (text: string, context: ChatContext) => Promise<void>
+  sendMessage: (text: string, context?: LLMContext) => Promise<void>
   stopGeneration: () => void
   clearError: () => void
 }
@@ -69,7 +64,6 @@ export const useAiStore = create<AiStore>((set, get) => {
   const initialConversation = createConversation()
 
   return {
-    providerId: 'mock',
     conversations: [initialConversation],
     activeConversationId: initialConversation.id,
     inputDraft: '',
@@ -78,7 +72,6 @@ export const useAiStore = create<AiStore>((set, get) => {
     abortController: null,
     showHistory: false,
 
-    setProviderId: (id) => set({ providerId: id }),
     setInputDraft: (value) => set({ inputDraft: value }),
     setShowHistory: (show) => set({ showHistory: show }),
     clearError: () => set({ error: null }),
@@ -121,12 +114,17 @@ export const useAiStore = create<AiStore>((set, get) => {
       set({ abortController: null, isStreaming: false })
     },
 
-    sendMessage: async (text, context) => {
+    sendMessage: async (text, contextOverride) => {
       const trimmed = text.trim()
       if (!trimmed || get().isStreaming) return
 
-      const { activeConversationId, conversations, providerId } = get()
+      const context = contextOverride ?? collectLLMContext()
+
+      const { activeConversationId, conversations } = get()
       if (!activeConversationId) return
+
+      const aiSettings = getAISettingsConfig()
+      const providerId = aiSettings.aiProviderId
 
       const conversation = conversations.find((c) => c.id === activeConversationId)
       if (!conversation) return
@@ -175,6 +173,10 @@ export const useAiStore = create<AiStore>((set, get) => {
           messages,
           context,
           signal: abortController.signal,
+          config: {
+            openRouterApiKey: aiSettings.openRouterApiKey,
+            openRouterModel: aiSettings.openRouterModel,
+          },
         })) {
           if (chunk.type === 'delta' && chunk.content) {
             set((state) => ({
@@ -248,7 +250,6 @@ export const useAiStore = create<AiStore>((set, get) => {
 })
 
 export function useAi() {
-  const providerId = useAiStore((s) => s.providerId)
   const conversations = useAiStore((s) => s.conversations)
   const activeConversationId = useAiStore((s) => s.activeConversationId)
   const inputDraft = useAiStore((s) => s.inputDraft)
@@ -260,7 +261,6 @@ export function useAi() {
     conversations.find((c) => c.id === activeConversationId) ?? conversations[0] ?? null
 
   return {
-    providerId,
     conversations,
     activeConversation,
     activeConversationId,
@@ -269,7 +269,6 @@ export function useAi() {
     isStreaming,
     error,
     showHistory,
-    setProviderId: useAiStore.getState().setProviderId,
     setInputDraft: useAiStore.getState().setInputDraft,
     setShowHistory: useAiStore.getState().setShowHistory,
     createNewConversation: useAiStore.getState().createNewConversation,

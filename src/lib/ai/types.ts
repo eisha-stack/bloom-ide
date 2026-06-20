@@ -16,12 +16,15 @@ export type Conversation = {
   updatedAt: number
 }
 
-export type ChatContext = {
-  activeFileName?: string | null
-  activeFileContent?: string | null
-  workspacePath?: string | null
-  language?: string | null
-}
+export type { LLMContext as ChatContext, LLMContext } from './context/types'
+export type {
+  LLMContextBudget,
+  LLMContextFormatOptions,
+  LLMContextInclude,
+  LLMContextSummary,
+} from './context/types'
+
+import type { LLMContext } from './context/types'
 
 export type StreamChunk = {
   type: 'delta' | 'done' | 'error'
@@ -29,21 +32,23 @@ export type StreamChunk = {
   error?: string
 }
 
-export type ChatCompletionRequest = {
-  messages: ChatMessage[]
-  context: ChatContext
-  signal?: AbortSignal
+export type AIProviderConfig = {
+  openRouterApiKey?: string
+  openRouterModel?: string
 }
 
-export type AIProviderId = 'mock' | 'openai' | 'anthropic' | 'cursor'
+export type ChatCompletionRequest = {
+  messages: ChatMessage[]
+  context: LLMContext
+  signal?: AbortSignal
+  config?: AIProviderConfig
+}
+
+export type AIProviderId = 'mock' | 'openrouter' | 'openai' | 'anthropic' | 'cursor'
 
 export interface AIProvider {
   readonly id: AIProviderId
   readonly name: string
   readonly supportsStreaming: boolean
   streamChat(request: ChatCompletionRequest): AsyncGenerator<StreamChunk, void>
-}
-
-export type AIProviderConfig = {
-  activeProviderId: AIProviderId
 }

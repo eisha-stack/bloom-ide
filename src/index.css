@@ -209,9 +209,21 @@ button:focus-visible {
 }
 
 .ai-inline-code {
-  background: var(--bg-secondary);
-  color: var(--bloom-lilac);
+  background: var(--bg-editor);
+  color: var(--text-primary);
   border: 1px solid var(--border-subtle);
+  font-weight: 500;
+}
+
+[data-mode='light'] .ai-inline-code {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-primary);
+  border-color: rgba(122, 84, 101, 0.22);
+}
+
+[data-mode='dark'] .ai-inline-code {
+  color: var(--bloom-lilac);
+  background: var(--bg-secondary);
 }
 
 .ai-code-block {

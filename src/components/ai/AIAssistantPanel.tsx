@@ -1,21 +1,22 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { AlertCircle, History, Plus, X } from 'lucide-react'
 import { useCallback } from 'react'
-import type { ChatContext } from '../../lib/ai'
 import { useAi } from '../../stores/aiStore'
+import { useSettings } from '../../stores/settingsStore'
+import { useLLMContext } from '../../hooks/useLLMContext'
 import { BloomLogo } from '../ui/BloomLogo'
 import { ChatInput } from './ChatInput'
 import { ChatMessageList } from './ChatMessageList'
+import { ContextBar } from './ContextBar'
 import { ConversationHistory } from './ConversationHistory'
 import { SuggestedPrompts } from './SuggestedPrompts'
 
 type AIAssistantPanelProps = {
   open: boolean
   onClose: () => void
-  context: ChatContext
 }
 
-export function AIAssistantPanel({ open, onClose, context }: AIAssistantPanelProps) {
+export function AIAssistantPanel({ open, onClose }: AIAssistantPanelProps) {
   const {
     conversations,
     activeConversationId,
@@ -33,15 +34,24 @@ export function AIAssistantPanel({ open, onClose, context }: AIAssistantPanelPro
     stopGeneration,
     clearError,
   } = useAi()
+  const { summary } = useLLMContext()
+  const { aiProviderId, openRouterModel, hasOpenRouterKey } = useSettings()
+
+  const providerLabel =
+    aiProviderId === 'openrouter'
+      ? hasOpenRouterKey
+        ? `OpenRouter · ${openRouterModel.split('/').pop()}`
+        : 'OpenRouter · key required'
+      : 'Mock provider'
 
   const hasUserMessages = messages.some((m) => m.role === 'user')
 
   const handleSend = useCallback(
     (text?: string) => {
       const payload = text ?? inputDraft
-      void sendMessage(payload, context)
+      void sendMessage(payload)
     },
-    [context, inputDraft, sendMessage],
+    [inputDraft, sendMessage],
   )
 
   return (
@@ -61,7 +71,7 @@ export function AIAssistantPanel({ open, onClose, context }: AIAssistantPanelPro
                 <h2 className="m-0 font-[family-name:var(--font-heading)] text-[13px] font-semibold text-[var(--text-primary)]">
                   AI Assistant
                 </h2>
-                <p className="m-0 text-[10px] text-[var(--text-muted)]">Mock provider</p>
+                <p className="m-0 text-[10px] text-[var(--text-muted)]">{providerLabel}</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
@@ -116,11 +126,7 @@ export function AIAssistantPanel({ open, onClose, context }: AIAssistantPanelPro
           )}
 
           <div className="shrink-0 border-t border-[var(--border-subtle)] p-3">
-            {context.activeFileName && (
-              <p className="mb-2 truncate text-[10px] text-[var(--text-muted)]">
-                Context: <span className="text-[var(--bloom-lilac)]">{context.activeFileName}</span>
-              </p>
-            )}
+            <ContextBar summary={summary} />
             <ChatInput
               value={inputDraft}
               isStreaming={isStreaming}

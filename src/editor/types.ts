@@ -14,6 +14,14 @@ export type CursorPosition = {
   column: number
 }
 
+export type EditorSelection = {
+  text: string
+  startLine: number
+  startColumn: number
+  endLine: number
+  endColumn: number
+}
+
 export type EditorDocument = {
   id: string
   name: string
@@ -23,6 +31,7 @@ export type EditorDocument = {
   isDirty: boolean
   isWorkspaceFile: boolean
   cursor: CursorPosition
+  selection: EditorSelection | null
 }
 
 export type OpenDocumentInput = {

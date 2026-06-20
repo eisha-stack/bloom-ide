@@ -49,7 +49,7 @@ function remeasureEditorFonts(
 }
 
 export function MonacoEditor() {
-  const { activeTab, activeTabId, updateContent, updateCursor } = useEditor()
+  const { activeTab, activeTabId, updateContent, updateCursor, updateSelection } = useEditor()
   const { monacoThemeId } = useTheme()
   const containerRef = useRef<HTMLDivElement>(null)
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
@@ -97,9 +97,31 @@ export function MonacoEditor() {
         updateCursor(e.position.lineNumber, e.position.column)
       })
 
+      editorInstance.onDidChangeCursorSelection((e) => {
+        if (!activeTabId) return
+
+        const sel = e.selection
+        const model = editorInstance.getModel()
+        if (!model) return
+
+        const text = model.getValueInRange(sel)
+        if (!text.trim()) {
+          updateSelection(activeTabId, null)
+          return
+        }
+
+        updateSelection(activeTabId, {
+          text,
+          startLine: sel.startLineNumber,
+          startColumn: sel.startColumn,
+          endLine: sel.endLineNumber,
+          endColumn: sel.endColumn,
+        })
+      })
+
       remeasureEditorFonts(editorInstance, monaco)
     },
-    [activeTab, monacoThemeId, updateCursor],
+    [activeTab, activeTabId, monacoThemeId, updateCursor, updateSelection],
   )
 
   useEffect(() => {

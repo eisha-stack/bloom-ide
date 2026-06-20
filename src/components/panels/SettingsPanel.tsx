@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion'
-import { Check, Palette, Save } from 'lucide-react'
+import { Bot, Check, Palette, Save } from 'lucide-react'
+import { OPENROUTER_MODELS } from '../../lib/ai/openrouter'
+import type { AIProviderId } from '../../lib/ai'
 import { useSettings } from '../../stores/settingsStore'
 import { useTheme } from '../../theme/ThemeProvider'
 import type { ThemeDefinition, ThemeId } from '../../theme/types'
@@ -86,7 +88,17 @@ function ThemeCard({
 
 export function SettingsPanel() {
   const { themeId, setThemeId, themes } = useTheme()
-  const { autoSave, setAutoSave } = useSettings()
+  const {
+    autoSave,
+    setAutoSave,
+    aiProviderId,
+    setAiProviderId,
+    openRouterApiKey,
+    setOpenRouterApiKey,
+    openRouterModel,
+    setOpenRouterModel,
+    hasOpenRouterKey,
+  } = useSettings()
 
   return (
     <div className="flex h-full flex-col overflow-y-auto">
@@ -144,6 +156,93 @@ export function SettingsPanel() {
               className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent-primary)]"
             />
           </label>
+        </section>
+
+        <section className="mt-6">
+          <div className="mb-3 flex items-center gap-2">
+            <Bot size={14} className="text-[var(--bloom-lavender)]" />
+            <h3 className="m-0 text-[13px] font-semibold text-[var(--text-primary)]">AI Assistant</h3>
+          </div>
+          <p className="m-0 mb-4 text-[11px] text-[var(--text-muted)]">
+            Connect OpenRouter to use real models in the chat panel. Your key is stored locally in
+            this browser only.
+          </p>
+
+          <div className="space-y-3">
+            <label className="block">
+              <span className="mb-1.5 block text-[11px] font-medium text-[var(--text-secondary)]">
+                Provider
+              </span>
+              <select
+                value={aiProviderId}
+                onChange={(e) => setAiProviderId(e.target.value as AIProviderId)}
+                className="w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-2 text-[12px] text-[var(--text-primary)] outline-none focus:border-[rgba(168,85,247,0.35)]"
+              >
+                <option value="mock">Mock (offline demo)</option>
+                <option value="openrouter">OpenRouter</option>
+              </select>
+            </label>
+
+            {aiProviderId === 'openrouter' && (
+              <>
+                <label className="block">
+                  <span className="mb-1.5 block text-[11px] font-medium text-[var(--text-secondary)]">
+                    OpenRouter API key
+                  </span>
+                  <input
+                    type="password"
+                    value={openRouterApiKey}
+                    onChange={(e) => setOpenRouterApiKey(e.target.value)}
+                    placeholder="sk-or-v1-…"
+                    autoComplete="off"
+                    className="w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-2 font-[family-name:var(--font-mono)] text-[12px] text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)] focus:border-[rgba(168,85,247,0.35)]"
+                  />
+                  <p className="m-0 mt-1.5 text-[10px] text-[var(--text-muted)]">
+                    Get a key at{' '}
+                    <a
+                      href="https://openrouter.ai/keys"
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="text-[var(--bloom-lilac)] underline"
+                    >
+                      openrouter.ai/keys
+                    </a>
+                    . Never commit keys to git.
+                  </p>
+                </label>
+
+                <label className="block">
+                  <span className="mb-1.5 block text-[11px] font-medium text-[var(--text-secondary)]">
+                    Model
+                  </span>
+                  <select
+                    value={openRouterModel}
+                    onChange={(e) => setOpenRouterModel(e.target.value)}
+                    className="w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-card)] px-3 py-2 text-[12px] text-[var(--text-primary)] outline-none focus:border-[rgba(168,85,247,0.35)]"
+                  >
+                    {OPENROUTER_MODELS.map((model) => (
+                      <option key={model.id} value={model.id}>
+                        {model.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <div
+                  className={[
+                    'rounded-[var(--radius-md)] border px-3 py-2 text-[11px]',
+                    hasOpenRouterKey
+                      ? 'border-[rgba(134,239,172,0.25)] bg-[rgba(134,239,172,0.08)] text-[var(--success)]'
+                      : 'border-[rgba(248,113,113,0.25)] bg-[rgba(248,113,113,0.08)] text-[var(--error)]',
+                  ].join(' ')}
+                >
+                  {hasOpenRouterKey
+                    ? 'OpenRouter is configured. Open the AI panel and start chatting.'
+                    : 'Paste your OpenRouter API key above to enable real AI responses.'}
+                </div>
+              </>
+            )}
+          </div>
         </section>
 
         <section className="mt-6 rounded-[var(--radius-md)] border border-[var(--border-subtle)] p-3">

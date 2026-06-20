@@ -6,8 +6,27 @@ export type {
   ChatContext,
   ChatMessage,
   Conversation,
+  LLMContext,
+  LLMContextBudget,
+  LLMContextFormatOptions,
+  LLMContextInclude,
+  LLMContextSummary,
   MessageRole,
   StreamChunk,
 } from './types'
 
-export { getAIProvider, listAvailableProviders, mockProvider } from './providers'
+export {
+  collectLLMContext,
+  summarizeLLMContext,
+  buildContextSystemPrompt,
+  buildPromptFromIDE,
+  DEFAULT_CONTEXT_BUDGET,
+  DEFAULT_CONTEXT_INCLUDE,
+} from './context'
+
+export { getAIProvider, listAvailableProviders, mockProvider, openrouterProvider } from './providers'
+export {
+  DEFAULT_OPENROUTER_MODEL,
+  OPENROUTER_MODELS,
+  streamOpenRouterChat,
+} from './openrouter'

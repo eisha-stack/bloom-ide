@@ -26,6 +26,7 @@ type EditorStore = {
   selectTab: (id: string) => void
   updateContent: (id: string, content: string) => void
   updateCursor: (line: number, column: number) => void
+  updateSelection: (id: string, selection: import('../editor/types').EditorSelection | null) => void
   markSaved: (id: string) => void
 }
 
@@ -41,6 +42,7 @@ function createDocument(input: OpenDocumentInput): EditorDocument {
     isDirty: false,
     isWorkspaceFile: input.isWorkspaceFile ?? false,
     cursor: { line: 1, column: 1 },
+    selection: null,
   }
 }
 
@@ -237,6 +239,12 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     })
   },
 
+  updateSelection: (id, selection) => {
+    set({
+      tabs: get().tabs.map((tab) => (tab.id === id ? { ...tab, selection } : tab)),
+    })
+  },
+
   markSaved: (id) => {
     set({
       tabs: get().tabs.map((tab) =>
@@ -273,6 +281,7 @@ export function useEditor() {
   const selectTab = useEditorStore((s) => s.selectTab)
   const updateContent = useEditorStore((s) => s.updateContent)
   const updateCursor = useEditorStore((s) => s.updateCursor)
+  const updateSelection = useEditorStore((s) => s.updateSelection)
   const markSaved = useEditorStore((s) => s.markSaved)
 
   return {
@@ -295,6 +304,7 @@ export function useEditor() {
     selectTab,
     updateContent,
     updateCursor,
+    updateSelection,
     markSaved,
   }
 }

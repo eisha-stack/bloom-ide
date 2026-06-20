@@ -25,13 +25,20 @@ function sleep(ms: number, signal?: AbortSignal): Promise<void> {
 function buildMockResponse(request: ChatCompletionRequest): string {
   const lastUser = [...request.messages].reverse().find((m) => m.role === 'user')
   const prompt = lastUser?.content ?? ''
-  const file = request.context.activeFileName
-  const lang = request.context.language ?? 'typescript'
+  const ctx = request.context
+  const file = ctx.activeFile?.name
+  const lang = ctx.activeFile?.language ?? 'typescript'
+  const selection = ctx.selection
+  const tabCount = ctx.openTabs.length
+  const structureCount = ctx.projectStructure.length
 
   if (/explain|what does|how does/i.test(prompt)) {
     return `# Explanation
 
-${file ? `Looking at **${file}**:\n\n` : ''}Here's a breakdown of what you're asking about:
+${file ? `Looking at **${file}**` : 'Based on your workspace'}${selection ? ` (lines ${selection.startLine}–${selection.endLine} selected)` : ''}:
+
+${tabCount > 0 ? `- **${tabCount}** open tab(s)\n` : ''}${structureCount > 0 ? `- **${structureCount}** project entries in context\n` : ''}
+Here's a breakdown of what you're asking about:
 
 1. **Purpose** — The code handles a specific workflow in your app.
 2. **Key parts** — State, effects, and side effects work together.
