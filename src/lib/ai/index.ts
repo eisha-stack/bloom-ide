@@ -30,3 +30,5 @@ export {
   OPENROUTER_MODELS,
   streamOpenRouterChat,
 } from './openrouter'
+export { CODE_ACTIONS, buildCodeActionPrompt, getCodeAction } from './codeActions'
+export type { CodeAction, CodeActionId } from './codeActions'

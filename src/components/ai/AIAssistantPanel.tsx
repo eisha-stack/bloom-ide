@@ -1,15 +1,16 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { AlertCircle, History, Plus, X } from 'lucide-react'
 import { useCallback } from 'react'
+import { buildCodeActionPrompt, type CodeActionId } from '../../lib/ai/codeActions'
+import { useLLMContext } from '../../hooks/useLLMContext'
 import { useAi } from '../../stores/aiStore'
 import { useSettings } from '../../stores/settingsStore'
-import { useLLMContext } from '../../hooks/useLLMContext'
 import { BloomLogo } from '../ui/BloomLogo'
 import { ChatInput } from './ChatInput'
 import { ChatMessageList } from './ChatMessageList'
+import { CodeActions } from './CodeActions'
 import { ContextBar } from './ContextBar'
 import { ConversationHistory } from './ConversationHistory'
-import { SuggestedPrompts } from './SuggestedPrompts'
 
 type AIAssistantPanelProps = {
   open: boolean
@@ -34,7 +35,7 @@ export function AIAssistantPanel({ open, onClose }: AIAssistantPanelProps) {
     stopGeneration,
     clearError,
   } = useAi()
-  const { summary } = useLLMContext()
+  const { context, summary } = useLLMContext()
   const { aiProviderId, openRouterModel, hasOpenRouterKey } = useSettings()
 
   const providerLabel =
@@ -44,14 +45,21 @@ export function AIAssistantPanel({ open, onClose }: AIAssistantPanelProps) {
         : 'OpenRouter · key required'
       : 'Mock provider'
 
-  const hasUserMessages = messages.some((m) => m.role === 'user')
-
   const handleSend = useCallback(
     (text?: string) => {
       const payload = text ?? inputDraft
       void sendMessage(payload)
     },
     [inputDraft, sendMessage],
+  )
+
+  const handleCodeAction = useCallback(
+    (actionId: CodeActionId) => {
+      if (!context.selection) return
+      const prompt = buildCodeActionPrompt(actionId, context)
+      void sendMessage(prompt)
+    },
+    [context, sendMessage],
   )
 
   return (
@@ -102,10 +110,6 @@ export function AIAssistantPanel({ open, onClose }: AIAssistantPanelProps) {
             </div>
           </div>
 
-          {!hasUserMessages && !isStreaming && (
-            <SuggestedPrompts onSelect={handleSend} disabled={isStreaming} />
-          )}
-
           <ChatMessageList messages={messages} isStreaming={isStreaming} />
 
           {error && (
@@ -126,6 +130,11 @@ export function AIAssistantPanel({ open, onClose }: AIAssistantPanelProps) {
           )}
 
           <div className="shrink-0 border-t border-[var(--border-subtle)] p-3">
+            <CodeActions
+              hasSelection={summary.hasSelection}
+              disabled={isStreaming}
+              onAction={handleCodeAction}
+            />
             <ContextBar summary={summary} />
             <ChatInput
               value={inputDraft}
