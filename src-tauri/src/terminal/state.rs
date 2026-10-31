@@ -11,6 +11,8 @@ use portable_pty::{native_pty_system, Child, CommandBuilder, MasterPty, PtySize}
 use tauri::{AppHandle, Emitter};
 use uuid::Uuid;
 
+use crate::path_util::normalize_path;
+
 use super::error::{CommandError, TerminalError, TerminalResult};
 use super::types::{
     CommandExecuteResult, CommandExitEvent, CommandOutputEvent, ShellInfo, TerminalExitEvent,
@@ -39,8 +41,13 @@ impl Default for TerminalManager {
 fn default_cwd(workspace: Option<String>) -> PathBuf {
     workspace
         .map(PathBuf::from)
+        .map(normalize_path)
         .filter(|path| path.is_dir())
-        .unwrap_or_else(|| std::env::current_dir().unwrap_or_else(|_| PathBuf::from(".")))
+        .unwrap_or_else(|| {
+            std::env::current_dir()
+                .map(normalize_path)
+                .unwrap_or_else(|_| PathBuf::from("."))
+        })
 }
 
 fn resolve_shell(shell: &str) -> Result<(String, Vec<String>), TerminalError> {

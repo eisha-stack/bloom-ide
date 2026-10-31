@@ -6,6 +6,32 @@
 
 ---
 
+## Screenshots
+
+![BloomCode welcome screen](docs/screenshots/welcome-screen.png)
+<p align="center"><em>Welcome screen — Bloom Dark theme with the file explorer</em></p>
+
+<table>
+  <tr>
+    <td width="50%">
+      <img src="docs/screenshots/bloom-dark-editor.png" alt="Editor with AI Assistant in Bloom Dark theme" />
+      <p align="center"><em>Editor + AI Assistant (Bloom Dark)</em></p>
+    </td>
+    <td width="50%">
+      <img src="docs/screenshots/sakura-editor-ai.png" alt="Editor with AI Assistant in Sakura Blossom theme" />
+      <p align="center"><em>Editor + AI Assistant (Sakura Blossom)</em></p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <img src="docs/screenshots/theme-settings.png" alt="Settings panel with theme picker" />
+      <p align="center"><em>Settings — theme picker and editor options</em></p>
+    </td>
+  </tr>
+</table>
+
+---
+
 ## Features
 
 ### Editor

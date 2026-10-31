@@ -1,14 +1,14 @@
 use std::path::{Component, Path, PathBuf};
 
+use crate::path_util::canonicalize_normalized;
+
 use super::error::{FsError, CommandResult};
 
 /// Resolve a relative path within the workspace root. Rejects traversal and absolute paths.
 pub fn resolve_workspace_path(workspace: &Path, relative: &str) -> CommandResult<PathBuf> {
     validate_relative_path(relative)?;
 
-    let workspace_root = workspace
-        .canonicalize()
-        .map_err(FsError::Io)?;
+    let workspace_root = canonicalize_normalized(workspace).map_err(FsError::Io)?;
 
     let mut resolved = workspace_root.clone();
     for component in Path::new(relative).components() {
@@ -22,7 +22,7 @@ pub fn resolve_workspace_path(workspace: &Path, relative: &str) -> CommandResult
     }
 
     if resolved.exists() {
-        let canonical = resolved.canonicalize().map_err(FsError::Io)?;
+        let canonical = canonicalize_normalized(&resolved).map_err(FsError::Io)?;
         if !canonical.starts_with(&workspace_root) {
             return Err(FsError::OutsideWorkspace.into());
         }

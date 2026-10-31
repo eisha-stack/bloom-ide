@@ -1,6 +1,8 @@
 use std::path::PathBuf;
 use std::sync::Mutex;
 
+use crate::path_util::normalize_path;
+
 pub struct WorkspaceState {
     pub root: Mutex<Option<PathBuf>>,
 }
@@ -22,6 +24,7 @@ impl WorkspaceState {
                 message: "Failed to acquire workspace lock".into(),
             })?
             .clone()
+            .map(normalize_path)
             .ok_or_else(|| super::error::FsError::NoWorkspace.into())
     }
 
@@ -30,7 +33,7 @@ impl WorkspaceState {
             code: "LOCK_ERROR",
             message: "Failed to acquire workspace lock".into(),
         })?;
-        *guard = Some(path);
+        *guard = Some(normalize_path(path));
         Ok(())
     }
 }

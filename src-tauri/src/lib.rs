@@ -1,5 +1,6 @@
 mod fs;
 mod git;
+mod path_util;
 mod terminal;
 
 use fs::{

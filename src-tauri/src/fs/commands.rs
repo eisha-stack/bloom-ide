@@ -3,6 +3,8 @@ use std::fs;
 use tauri::{AppHandle, State};
 use tauri_plugin_dialog::DialogExt;
 
+use crate::path_util::canonicalize_normalized;
+
 use super::error::{CommandResult, FsError};
 use super::scope::resolve_workspace_path;
 use super::state::WorkspaceState;
@@ -25,7 +27,7 @@ pub fn open_folder(app: AppHandle, state: State<'_, WorkspaceState>) -> CommandR
         .into_path()
         .map_err(|e| FsError::Dialog(e.to_string()))?;
 
-    let canonical = path.canonicalize().map_err(FsError::Io)?;
+    let canonical = canonicalize_normalized(&path).map_err(FsError::Io)?;
 
     if !canonical.is_dir() {
         return Err(FsError::InvalidPath("selected path is not a directory".into()).into());
@@ -166,7 +168,7 @@ pub fn list_dir(
     let workspace = state.get_root()?;
     let relative = path.unwrap_or_default();
     let resolved = if relative.is_empty() {
-        workspace.canonicalize().map_err(FsError::Io)?
+        canonicalize_normalized(&workspace).map_err(FsError::Io)?
     } else {
         resolve_workspace_path(&workspace, &relative)?
     };

@@ -1,4 +1,4 @@
-[[permission]]
+ [[permission]]
 identifier = "allow-open-folder"
 description = "Allows opening a workspace folder via native dialog"
 commands.allow = ["open_folder"]
